@@ -13,12 +13,12 @@ import Constants from 'expo-constants';
 const SUPABASE_URL: string =
   Constants.expoConfig?.extra?.supabaseUrl ??
   process.env.SUPABASE_URL ??
-  'https://YOUR_PROJECT.supabase.co';
+  'https://uokqhrbiwqcyuszltsxk.supabase.co';
 
 const SUPABASE_ANON_KEY: string =
   Constants.expoConfig?.extra?.supabaseAnonKey ??
   process.env.SUPABASE_ANON_KEY ??
-  'YOUR_SUPABASE_ANON_KEY';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVva3FocmJpd3FjeXVzemx0c3hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNDYyMTEsImV4cCI6MjA4OTkyMjIxMX0.NYYVZC2RKAVJvdAx44Y9AfS3TVqB15h3rn0a2YReHQ4';
 
 // ---------------------------------------------------------------------------
 // Simple in-memory storage adapter
