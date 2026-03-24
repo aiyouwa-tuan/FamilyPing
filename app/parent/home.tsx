@@ -100,6 +100,26 @@ export default function ParentHomeScreen() {
           />
         )}
 
+        {/* Tools Row */}
+        <View style={styles.toolsRow}>
+          <TouchableOpacity
+            style={styles.toolCard}
+            onPress={() => router.push('/parent/phonebook')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.toolEmoji}>{'\uD83D\uDCDE'}</Text>
+            <Text style={styles.toolLabel}>Phonebook</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.toolCard}
+            onPress={() => router.push('/parent/magnifier')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.toolEmoji}>{'\uD83D\uDD0D'}</Text>
+            <Text style={styles.toolLabel}>Magnifier</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* SOS */}
         <SOSButton onTrigger={handleSOS} />
 
@@ -156,6 +176,30 @@ const styles = StyleSheet.create({
     color: colors.success,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  toolsRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  toolCard: {
+    flex: 1,
+    backgroundColor: colors.card,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+    minHeight: 100,
+    gap: spacing.sm,
+  },
+  toolEmoji: {
+    fontSize: 36,
+  },
+  toolLabel: {
+    fontSize: fonts.parentBody,
+    fontWeight: '700',
+    color: colors.text,
   },
   backButton: {
     alignItems: 'center',
