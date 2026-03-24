@@ -78,3 +78,39 @@ export interface WeatherData {
   rain_chance: number;
   city: string;
 }
+
+// ============ V2.0 Health Sensing Types ============
+
+export type AnomalyType = 'steps_low' | 'inactive' | 'late_checkin' | 'mood_decline';
+export type AnomalySeverity = 'watch' | 'alert';
+
+export interface DailyMetrics {
+  id: string;
+  user_id: string;
+  date: string;
+  steps: number | null;
+  active_hours: number | null;
+  checkin_time: string | null;
+  mood: Mood | null;
+  sleep_minutes: number | null;
+}
+
+export interface Anomaly {
+  id: string;
+  user_id: string;
+  date: string;
+  type: AnomalyType;
+  severity: AnomalySeverity;
+  metric_value: number | null;
+  baseline_value: number | null;
+  deviation: number | null;
+  notified: boolean;
+}
+
+export interface WeeklySummary {
+  id: string;
+  user_id: string;
+  week_start: string;
+  summary_text: string;
+  highlights: any[];
+}

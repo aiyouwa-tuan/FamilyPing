@@ -97,6 +97,30 @@ export default function FamilyDashboardScreen() {
         {/* Week Calendar */}
         <WeekCalendar checkins={history} />
 
+        {/* Health Section */}
+        <TouchableOpacity
+          style={styles.healthCard}
+          onPress={() => router.push('/family/health')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.healthHeader}>
+            <Text style={styles.healthEmoji}>{'\u2764\uFE0F'}</Text>
+            <Text style={styles.healthTitle}>Health</Text>
+          </View>
+          <View style={styles.healthSteps}>
+            <Text style={styles.healthStepsValue}>3,600</Text>
+            <Text style={styles.healthStepsLabel}>steps today</Text>
+            <Text style={[styles.healthTrend, { color: colors.success }]}>{'\u2191'} 4%</Text>
+          </View>
+          <View style={styles.healthSummarySnippet}>
+            <Text style={styles.healthSummaryIcon}>{'\uD83D\uDCCA'}</Text>
+            <Text style={styles.healthSummaryText} numberOfLines={1}>
+              Weekly Summary: Moderately active week, Saturday dipped...
+            </Text>
+          </View>
+          <Text style={styles.healthTap}>Tap to view details</Text>
+        </TouchableOpacity>
+
         {/* Stats Row */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
@@ -247,6 +271,73 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     fontSize: 24,
+  },
+  healthCard: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.danger,
+  },
+  healthHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  healthEmoji: {
+    fontSize: 20,
+  },
+  healthTitle: {
+    fontSize: fonts.subtitle,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  healthSteps: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  healthStepsValue: {
+    fontSize: fonts.title,
+    fontWeight: '800',
+    color: colors.text,
+  },
+  healthStepsLabel: {
+    fontSize: fonts.small,
+    color: colors.textSecondary,
+  },
+  healthTrend: {
+    fontSize: fonts.small,
+    fontWeight: '700',
+  },
+  healthSummarySnippet: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.background,
+    borderRadius: borderRadius.sm,
+    padding: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  healthSummaryIcon: {
+    fontSize: 14,
+  },
+  healthSummaryText: {
+    fontSize: fonts.small,
+    color: colors.textSecondary,
+    flex: 1,
+  },
+  healthTap: {
+    fontSize: fonts.tiny,
+    color: colors.textLight,
+    textAlign: 'right',
   },
   statsRow: {
     flexDirection: 'row',

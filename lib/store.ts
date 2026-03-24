@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User, Family, Checkin, Message, Mood, WeatherData } from './types';
+import type { User, Family, Checkin, Message, Mood, WeatherData, DailyMetrics, Anomaly, WeeklySummary } from './types';
 
 // ============ Auth Store ============
 interface AuthState {
@@ -67,6 +67,29 @@ export const useFamilyStore = create<FamilyState>((set) => ({
   setMessages: (messages) => set({ messages }),
   addMessage: (message) => set((state) => ({ messages: [message, ...state.messages] })),
   setWeather: (weather) => set({ weather }),
+}));
+
+// ============ Metrics Store (V2.0) ============
+interface MetricsState {
+  todayMetrics: DailyMetrics | null;
+  weeklyMetrics: DailyMetrics[];
+  anomalies: Anomaly[];
+  weeklySummary: WeeklySummary | null;
+  setTodayMetrics: (metrics: DailyMetrics) => void;
+  setWeeklyMetrics: (metrics: DailyMetrics[]) => void;
+  setAnomalies: (anomalies: Anomaly[]) => void;
+  setWeeklySummary: (summary: WeeklySummary) => void;
+}
+
+export const useMetricsStore = create<MetricsState>((set) => ({
+  todayMetrics: null,
+  weeklyMetrics: [],
+  anomalies: [],
+  weeklySummary: null,
+  setTodayMetrics: (todayMetrics) => set({ todayMetrics }),
+  setWeeklyMetrics: (weeklyMetrics) => set({ weeklyMetrics }),
+  setAnomalies: (anomalies) => set({ anomalies }),
+  setWeeklySummary: (weeklySummary) => set({ weeklySummary }),
 }));
 
 // ============ Mock Data Helpers ============

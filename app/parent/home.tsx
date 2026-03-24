@@ -118,6 +118,14 @@ export default function ParentHomeScreen() {
             <Text style={styles.toolEmoji}>{'\uD83D\uDD0D'}</Text>
             <Text style={styles.toolLabel}>Magnifier</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.toolCard}
+            onPress={() => router.push('/parent/medical-card')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.toolEmoji}>{'\uD83C\uDFE5'}</Text>
+            <Text style={styles.toolLabel}>Medical Card</Text>
+          </TouchableOpacity>
         </View>
 
         {/* SOS */}
