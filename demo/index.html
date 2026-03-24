@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>FamilyPing — Full Product Preview</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#FFF8F0;--card:#FFF;--pri:#FF6B35;--pri-lt:#FFF0E8;--sec:#4ECDC4;--sec-lt:#E8FAF8;--txt:#2D3436;--txt2:#636E72;--txt3:#B2BEC3;--bdr:#F0E6D8;--red:#E74C3C;--red-lt:#FDEDEC;--grn:#27AE60;--grn-lt:#E8F8F0;--wrn:#F39C12;--wrn-lt:#FEF5E7;--r:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1a1a2e;min-height:100vh;padding:16px;color:#fff}
+h1{text-align:center;font-size:24px;margin-bottom:4px}
+.sub{text-align:center;color:#aaa;font-size:13px;margin-bottom:16px}
+.vtabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.vt{padding:8px 18px;border-radius:20px;border:2px solid rgba(255,255,255,.2);background:0;color:#ccc;font-size:13px;font-weight:600;cursor:pointer}
+.vt.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.vt:hover:not(.on){border-color:rgba(255,255,255,.5);color:#fff}
+.ver-desc{text-align:center;color:#aaa;font-size:12px;margin-bottom:16px;max-width:600px;margin-left:auto;margin-right:auto}
+.phones{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.sec{display:none}.sec.on{display:block}
+.ph{width:360px}
+.frame{background:var(--bg);border-radius:36px;overflow:hidden;border:6px solid #333;min-height:700px;position:relative}
+.notch{width:120px;height:24px;background:#333;border-radius:0 0 16px 16px;margin:0 auto}
+.scr{padding:16px;max-height:720px;overflow-y:auto}
+.phlbl{text-align:center;color:#888;font-size:11px;margin-top:8px}
+.cd{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.gap{margin-bottom:12px}
+/* Parent styles */
+.greet{font-size:28px;font-weight:800;color:var(--txt)}
+.date{font-size:16px;color:var(--txt2);margin-top:2px}
+.wcard{background:#E3F2FD;border-radius:var(--r);padding:16px;margin-bottom:12px}
+.wrow{display:flex;align-items:center;gap:12px}
+.wicon{font-size:48px}
+.wtemp{font-size:40px;font-weight:700;color:var(--txt)}
+.wdesc{font-size:18px;color:var(--txt2)}
+.wdet{display:flex;justify-content:space-between;margin-top:6px;font-size:14px;color:var(--txt2)}
+.msgb{background:var(--pri-lt);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.msgl{font-size:14px;color:var(--pri);font-weight:600;margin-bottom:2px}
+.msgc{font-size:18px;color:var(--txt);line-height:1.4}
+.mtitle{font-size:18px;font-weight:600;color:var(--txt);text-align:center;margin-bottom:12px}
+.mbtns{display:flex;gap:8px;margin-bottom:12px}
+.mbtn{flex:1;padding:16px 6px;border-radius:var(--r);text-align:center;cursor:pointer;border:2px solid;background:var(--card);min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:.2s}
+.mbtn:hover{transform:scale(1.03)}
+.mbtn .em{font-size:40px}
+.mbtn .lb{font-size:14px;font-weight:700}
+.mbtn.g{border-color:var(--grn)}.mbtn.g .lb{color:var(--grn)}.mbtn.g.sel{background:var(--grn)}.mbtn.g.sel .lb{color:#fff}
+.mbtn.o{border-color:var(--wrn)}.mbtn.o .lb{color:var(--wrn)}.mbtn.o.sel{background:var(--wrn)}.mbtn.o.sel .lb{color:#fff}
+.mbtn.r{border-color:var(--red)}.mbtn.r .lb{color:var(--red)}.mbtn.r.sel{background:var(--red)}.mbtn.r.sel .lb{color:#fff}
+.sos{background:var(--red-lt);border-radius:var(--r);padding:16px;text-align:center;border:2px solid var(--red);margin-bottom:12px}
+.sos .em{font-size:28px}.sos .t{font-size:16px;font-weight:700;color:var(--red)}.sos .h{font-size:12px;color:var(--red);opacity:.7}
+.done{background:var(--grn-lt);border-radius:var(--r);padding:20px;text-align:center;margin-bottom:12px}
+.done .em{font-size:40px}.done .t{font-size:18px;color:var(--grn);font-weight:600;margin-top:6px}
+.qcard{background:var(--sec-lt);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.ql{font-size:14px;color:var(--sec);font-weight:600;margin-bottom:2px}
+.qt{font-size:18px;color:var(--txt);font-weight:600;margin-bottom:12px;line-height:1.3}
+.qinp{width:100%;border:none;background:var(--card);border-radius:10px;padding:10px;font-size:14px;min-height:60px;resize:none;font-family:inherit}
+.qacts{display:flex;justify-content:space-between;margin-top:10px}
+.qskip{padding:6px 16px;background:0;border:0;font-size:14px;color:var(--txt2);cursor:pointer}
+.qsend{padding:6px 20px;background:var(--sec);border:0;border-radius:10px;font-size:14px;color:#fff;font-weight:700;cursor:pointer}
+/* Child Dashboard */
+.dhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.appn{font-size:20px;font-weight:800;color:var(--pri)}
+.famn{font-size:12px;color:var(--txt2)}
+.avt{width:36px;height:36px;border-radius:18px;background:var(--pri-lt);display:flex;align-items:center;justify-content:center;font-size:20px}
+.phdr{display:flex;align-items:center;gap:12px}
+.pavt{font-size:40px}
+.pnm{font-size:20px;font-weight:700;color:var(--txt)}
+.srow{display:flex;align-items:center;gap:4px;margin-top:2px}
+.sdot{width:7px;height:7px;border-radius:4px}
+.stxt{font-size:14px;color:var(--txt2)}
+.mrow{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)}
+.mem{font-size:24px}
+.mtx{font-size:16px;font-weight:600}
+.strk{font-size:14px;color:var(--pri);font-weight:600;margin-top:6px}
+.acard{background:var(--pri-lt);border-radius:10px;padding:12px;margin-top:12px}
+.albl{font-size:11px;color:var(--pri);font-weight:600;margin-bottom:2px}
+.atxt{font-size:14px;color:var(--txt);font-style:italic;line-height:1.3}
+.wkr{display:flex;justify-content:space-between}
+.dc{text-align:center}.dl{font-size:10px;color:var(--txt2);font-weight:600;margin-bottom:4px}.dl.td{color:var(--pri);font-weight:800}
+.dcir{width:34px;height:34px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:14px;margin:0 auto 2px}
+.dd{font-size:10px;color:var(--txt3)}
+.strow{display:flex;gap:6px;margin-bottom:12px}
+.stcd{flex:1;background:var(--card);border-radius:var(--r);padding:10px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.stem{font-size:20px;margin-bottom:2px}
+.stv{font-size:16px;font-weight:700;color:var(--txt)}
+.stl{font-size:10px;color:var(--txt2);margin-top:1px}
+.acrow{display:flex;gap:8px;margin-bottom:12px}
+.abtn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:var(--r);border:none;cursor:pointer;font-size:14px;font-weight:700;color:#fff}
+.abtn.cl{background:var(--pri)}.abtn.ht{background:var(--sec)}
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:8px}
+.tab{flex:1;padding:6px;border-radius:8px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;background:var(--bg);color:var(--txt2)}
+.tab.on{background:var(--pri);color:#fff}
+/* Chat */
+.pvb{display:flex;align-items:center;justify-content:center;gap:4px;background:var(--sec-lt);padding:6px;font-size:12px;color:var(--sec);font-weight:600;margin-bottom:8px;border-radius:8px}
+.bub{display:flex;gap:6px;margin-bottom:8px;align-items:flex-end}
+.bub.own{flex-direction:row-reverse}
+.bavt{width:28px;height:28px;border-radius:14px;background:var(--pri-lt);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.bmsg{max-width:70%;border-radius:var(--r);padding:10px}
+.bmsg.oth{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.bmsg.own{background:var(--pri)}
+.bsnm{font-size:10px;font-weight:700;color:var(--pri);margin-bottom:2px}
+.btxt{font-size:14px;color:var(--txt);line-height:1.3}
+.bmsg.own .btxt{color:#fff}
+.btm{font-size:10px;color:var(--txt3);text-align:right;margin-top:2px}
+.bmsg.own .btm{color:rgba(255,255,255,.6)}
+.vbar{background:var(--bg);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px}
+.vbtn{font-size:16px;cursor:pointer}
+.vwave{flex:1;height:20px;background:linear-gradient(90deg,var(--pri) 40%,var(--bdr) 40%);border-radius:4px}
+.vdur{font-size:11px;color:var(--txt2)}
+.inbar{display:flex;gap:6px;padding:8px;background:var(--card);border-top:1px solid var(--bdr);border-radius:0 0 30px 30px;align-items:center}
+.inbar input{flex:1;border:none;background:var(--bg);border-radius:8px;padding:8px;font-size:13px}
+.inbtn{width:32px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;border:none}
+/* Health */
+.hlg{font-size:28px;font-weight:800;color:var(--txt);display:flex;align-items:baseline;gap:6px}
+.hlg .tr{font-size:13px;font-weight:700;padding:2px 8px;border-radius:10px}
+.hlg .tr.dn{background:var(--red-lt);color:var(--red)}.hlg .tr.up{background:var(--grn-lt);color:var(--grn)}
+.bars{display:flex;align-items:flex-end;gap:4px;height:120px;margin:12px 0}
+.bar{flex:1;border-radius:6px 6px 0 0;position:relative;min-width:20px}
+.barlbl{font-size:9px;color:var(--txt2);text-align:center;margin-top:2px}
+.barv{font-size:8px;color:var(--txt3);text-align:center}
+.dots{display:flex;gap:3px;flex-wrap:wrap;margin:8px 0}
+.dot{width:14px;height:14px;border-radius:7px}
+.anban{background:var(--wrn-lt);border-radius:var(--r);padding:12px;margin-bottom:12px;border-left:4px solid var(--wrn)}
+.anban.alert{background:var(--red-lt);border-left-color:var(--red)}
+.antxt{font-size:13px;color:var(--txt);font-weight:600}
+.ansub{font-size:11px;color:var(--txt2);margin-top:2px}
+.andis{font-size:11px;color:var(--wrn);cursor:pointer;text-align:right;margin-top:4px;font-weight:600}
+/* Medical */
+.medh{text-align:center;margin-bottom:12px}
+.medh .em{font-size:40px}
+.medh .t{font-size:20px;font-weight:700;color:var(--red)}
+.medf{margin-bottom:10px}
+.medf .l{font-size:12px;color:var(--txt2);font-weight:600;margin-bottom:2px}
+.medf .v{font-size:18px;color:var(--txt);padding:8px;background:var(--bg);border-radius:8px}
+/* Insight */
+.insd{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.insd .d{width:10px;height:10px;border-radius:5px}
+.insd .s{font-size:14px;font-weight:700;color:var(--txt)}
+.inssum{font-size:14px;color:var(--txt);line-height:1.4;margin-bottom:10px}
+.insbl{font-size:13px;color:var(--txt2);padding:4px 0;border-bottom:1px solid var(--bdr)}
+.inssg{background:var(--grn-lt);border-radius:10px;padding:10px;margin-top:8px}
+.inssg .t{font-size:12px;color:var(--grn);font-weight:600}
+.inswa{background:#E3F2FD;border-radius:10px;padding:10px;margin-top:8px}
+.inswa .t{font-size:12px;color:#1976D2;font-weight:600}
+/* Chips */
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.chip{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;cursor:pointer;background:var(--pri-lt);color:var(--pri)}
+/* Topic pills */
+.tpill{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;margin:2px}
+.tpill.pos{background:var(--grn-lt);color:var(--grn)}
+.tpill.neg{background:var(--wrn-lt);color:var(--wrn)}
+.tpill.neu{background:var(--bdr);color:var(--txt2)}
+/* Mood chart */
+.mchart{position:relative;height:140px;background:var(--card);border-radius:10px;margin:12px 0;overflow:hidden}
+.mzone{position:absolute;left:0;right:0}
+.mzone.g{top:0;height:40%;background:rgba(39,174,96,.08)}
+.mzone.y{top:40%;height:30%;background:rgba(243,156,18,.08)}
+.mzone.r{top:70%;height:30%;background:rgba(231,76,60,.08)}
+.mdot{position:absolute;width:8px;height:8px;border-radius:4px;transform:translate(-50%,-50%)}
+/* Topic tracker */
+.trow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bdr)}
+.tdot{width:8px;height:8px;border-radius:4px;flex-shrink:0}
+.tnm{font-size:14px;font-weight:600;color:var(--txt);flex:1}
+.tcnt{font-size:12px;color:var(--txt2)}
+/* Transcript */
+.tline{padding:8px 0;border-bottom:1px solid var(--bdr)}
+.tline.hi{background:rgba(243,156,18,.1);margin:0 -16px;padding:8px 16px;border-radius:8px}
+.tspk{font-size:11px;font-weight:700;margin-bottom:2px}
+.tspk.ai{color:var(--sec)}.tspk.mom{color:var(--pri)}
+.ttxt{font-size:14px;color:var(--txt);line-height:1.4}
+/* PRO card */
+.procd{display:flex;align-items:center;gap:12px;border:1px dashed var(--bdr);border-radius:var(--r);padding:14px;margin-bottom:12px;background:var(--card)}
+.proem{font-size:28px}
+.proinf{flex:1}
+.prot{font-size:14px;font-weight:700;color:var(--txt)}
+.prod{font-size:12px;color:var(--txt2);margin-top:1px}
+.probg{background:var(--wrn-lt);padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;color:var(--wrn)}
+.sectt{font-size:16px;font-weight:700;color:var(--txt);margin-bottom:10px}
+/* Plan cards */
+.plans{display:flex;flex-direction:column;gap:8px}
+.plan{border:2px solid var(--bdr);border-radius:var(--r);padding:12px;background:var(--card)}
+.plan.pop{border-color:var(--pri)}
+.plantit{font-size:16px;font-weight:700;color:var(--txt)}
+.planpr{font-size:14px;color:var(--pri);font-weight:600}
+.planfs{font-size:11px;color:var(--txt2);margin-top:4px;line-height:1.5}
+.planbtn{margin-top:8px;padding:6px;text-align:center;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+.planbtn.pri{background:var(--pri);color:#fff}
+.planbtn.out{border:1px solid var(--bdr);color:var(--txt2)}
+/* Tools row */
+.toolr{display:flex;gap:8px;margin-bottom:12px}
+.toolc{flex:1;background:var(--card);border-radius:var(--r);padding:14px;text-align:center;border:1px solid var(--bdr)}
+.toolc .em{font-size:28px}.toolc .lb{font-size:14px;font-weight:700;color:var(--txt);margin-top:4px}
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px}
+.badge.new{background:var(--pri-lt);color:var(--pri)}
+.msginp{display:flex;gap:6px;align-items:center}
+.msginp input{flex:1;background:var(--bg);border:none;border-radius:8px;padding:10px;font-size:14px}
+.msginp button{background:var(--pri);border:none;border-radius:8px;padding:10px 16px;color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.hidden{display:none!important}
+@media(max-width:800px){.phones{flex-direction:column;align-items:center}.ph{width:100%;max-width:380px}}
+</style>
+</head>
+<body>
+<h1>🏠 FamilyPing — Full Product Demo</h1>
+<p class="sub">Interactive preview of all features (V1.0 → V3.0)</p>
+
+<div class="vtabs" id="vtabs">
+<button class="vt on" onclick="showVer('v10')">V1.0 Core</button>
+<button class="vt" onclick="showVer('v15')">V1.5 Collab</button>
+<button class="vt" onclick="showVer('v20')">V2.0 Health</button>
+<button class="vt" onclick="showVer('v25')">V2.5 AI Brain</button>
+<button class="vt" onclick="showVer('v30')">V3.0 Voice</button>
+</div>
+
+<!-- ==================== V1.0 ==================== -->
+<div class="sec on" id="v10">
+<p class="ver-desc">Core product: Daily check-in, SOS, messages, weather, daily questions</p>
+<div class="phones">
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div class="gap"><div class="greet">Good morning, Mom!</div><div class="date" id="pdate"></div></div>
+<div class="wcard"><div class="wrow"><div class="wicon">⛅</div><div><div class="wtemp">72°F</div><div class="wdesc">Partly Cloudy</div></div></div><div class="wdet"><span>H:78° L:65°</span><span>Rain:20%</span></div></div>
+<div class="msgb"><div class="msgl">💌 From Sarah</div><div class="msgc">Love you mom! Have a great day today! 💕</div></div>
+<div id="mood-sec"><div class="mtitle">How are you feeling today?</div><div class="mbtns"><div class="mbtn g" onclick="doCI('g')"><div class="em">😊</div><div class="lb">Great</div></div><div class="mbtn o" onclick="doCI('o')"><div class="em">😐</div><div class="lb">OK</div></div><div class="mbtn r" onclick="doCI('r')"><div class="em">😔</div><div class="lb">Not great</div></div></div></div>
+<div id="ci-done" class="hidden"><div class="done"><div class="em">✅</div><div class="t">Sent! Your family knows you're OK</div></div></div>
+<div id="q-sec" class="hidden"><div class="qcard"><div class="ql">📝 Today's Question</div><div class="qt" id="dq"></div><textarea class="qinp" placeholder="Type your answer..."></textarea><div class="qacts"><button class="qskip" onclick="skipQ()">Skip</button><button class="qsend" onclick="ansQ()">Send 💌</button></div></div></div>
+<div id="q-done" class="hidden"><div class="done" style="background:var(--sec-lt)"><div class="t" style="color:var(--sec)">✅ Answer sent to your family!</div></div></div>
+<div class="toolr"><div class="toolc"><div class="em">📞</div><div class="lb">Phonebook</div></div><div class="toolc"><div class="em">🔍</div><div class="lb">Magnifier</div></div><div class="toolc"><div class="em">🏥</div><div class="lb">Medical</div></div></div>
+<div class="sos"><div class="em">🆘</div><div class="t">Hold for Emergency</div><div class="h">Hold 3 seconds to send SOS</div></div>
+</div></div><div class="phlbl">Parent's Phone (Large Text)</div></div>
+
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div class="dhdr"><div><div class="appn">FamilyPing</div><div class="famn">Robinson Family</div></div><div class="avt">👩</div></div>
+<div class="cd"><div class="phdr"><div class="pavt">👵</div><div><div class="pnm">Mom</div><div class="srow"><div class="sdot" style="background:var(--grn)"></div><div class="stxt">Checked in at 9:15 AM</div></div></div></div><div class="mrow"><div class="mem">😊</div><div class="mtx" style="color:var(--grn)">Feeling Great</div></div><div class="strk">🔥 12-day streak</div><div class="acard"><div class="albl">📝 Today's answer:</div><div class="atxt">"I made beef stew, your favorite recipe!"</div></div></div>
+<div class="cd"><div class="sectt">This Week</div><div class="wkr" id="wkcal"></div></div>
+<div class="strow"><div class="stcd"><div class="stem">⏱</div><div class="stv">9:22 AM</div><div class="stl">Avg check-in</div></div><div class="stcd"><div class="stem">🔥</div><div class="stv">12</div><div class="stl">Day streak</div></div><div class="stcd"><div class="stem">😊</div><div class="stv">5</div><div class="stl">Great days</div></div></div>
+<div class="acrow"><button class="abtn cl">📞 Call Mom</button><button class="abtn ht">📋 History</button></div>
+<div class="cd"><div class="sectt">💬 Send Mom a Message</div><div class="msginp"><input placeholder="Type a message for Mom..."><button>Send</button></div></div>
+<div class="procd"><div class="proem">👨‍👩‍👧</div><div class="proinf"><div class="prot">Invite Family Members</div><div class="prod">Add siblings to share caregiving</div></div><div class="probg">PRO</div></div>
+</div></div><div class="phlbl">Child's Phone (Dashboard)</div></div>
+</div></div>
+
+<!-- ==================== V1.5 ==================== -->
+<div class="sec" id="v15">
+<p class="ver-desc">Family collaboration: voice messages, photo sharing, private chat, phonebook, magnifier, paywall</p>
+<div class="phones">
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;color:var(--pri);font-weight:600;cursor:pointer">‹ Back</span><span style="font-size:16px;font-weight:700;color:var(--txt)">Messages</span><span style="width:50px"></span></div>
+<div class="tabs"><div class="tab on" id="tab-all" onclick="switchTab('all')">All Messages</div><div class="tab" id="tab-fc" onclick="switchTab('fc')">Family Chat</div></div>
+<div id="pvban" class="hidden"><div class="pvb">🔒 Parents can't see this</div></div>
+<div id="msgs-all">
+<div class="bub"><div class="bavt">👵</div><div class="bmsg oth"><div class="bsnm">Mom</div><div class="btxt">Good morning! I made pancakes today 🥞</div><div class="btm">8:15 AM</div></div></div>
+<div class="bub own"><div class="bmsg own"><div class="btxt">Love you Mom! Save me some!</div><div class="btm">8:30 AM</div></div></div>
+<div class="bub"><div class="bavt">👵</div><div class="bmsg oth"><div class="bsnm">Mom</div><div class="vbar"><div class="vbtn">▶</div><div class="vwave"></div><div class="vdur">0:12</div></div><div class="btm">9:20 AM</div></div></div>
+<div class="bub own"><div class="bmsg own"><div style="width:160px;height:100px;background:var(--pri-lt);border-radius:8px;display:flex;align-items:center;justify-content:center">📷 Photo</div><div class="btm">10:05 AM</div></div></div>
+</div>
+<div id="msgs-fc" class="hidden">
+<div class="bub"><div class="bavt">👨</div><div class="bmsg oth"><div class="bsnm">James</div><div class="btxt">Hey Sarah, should we plan Mom's birthday surprise?</div><div class="btm">2:15 PM</div></div></div>
+<div class="bub own"><div class="bmsg own"><div class="btxt">Yes! Let's do a surprise dinner. I'll book a restaurant 🎂</div><div class="btm">2:20 PM</div></div></div>
+</div>
+<div class="inbar"><div class="inbtn" style="background:var(--bg);color:var(--txt2)">+</div><input placeholder="Type a message..."><div class="inbtn" style="background:var(--red);color:#fff">🎤</div></div>
+</div></div><div class="phlbl">Messages + Family Chat <span class="badge new">V1.5</span></div></div>
+
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div class="sectt">📞 Phonebook</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+<div class="cd" style="text-align:center;padding:14px"><div style="font-size:36px">👵</div><div style="font-size:16px;font-weight:700;color:var(--txt)">Mom</div><div style="background:var(--grn);color:#fff;padding:6px;border-radius:8px;margin-top:6px;font-weight:600;font-size:14px">📞 Call</div></div>
+<div class="cd" style="text-align:center;padding:14px"><div style="font-size:36px">👩</div><div style="font-size:16px;font-weight:700;color:var(--txt)">Sarah</div><div style="background:var(--grn);color:#fff;padding:6px;border-radius:8px;margin-top:6px;font-weight:600;font-size:14px">📞 Call</div></div>
+<div class="cd" style="text-align:center;padding:14px"><div style="font-size:36px">👨</div><div style="font-size:16px;font-weight:700;color:var(--txt)">James</div><div style="background:var(--grn);color:#fff;padding:6px;border-radius:8px;margin-top:6px;font-weight:600;font-size:14px">📞 Call</div></div>
+<div class="cd" style="text-align:center;padding:14px;background:var(--red-lt);border:1px solid var(--red)"><div style="font-size:36px">🚨</div><div style="font-size:16px;font-weight:700;color:var(--red)">911</div><div style="background:var(--red);color:#fff;padding:6px;border-radius:8px;margin-top:6px;font-weight:600;font-size:14px">Emergency</div></div>
+</div>
+<div class="sectt">💰 Plans</div>
+<div class="plans">
+<div class="plan"><div style="display:flex;justify-content:space-between"><div class="plantit">Free</div><div class="planpr">$0</div></div><div class="planfs">1 parent + 1 child • Check-in • SOS • Weather</div><div class="planbtn out">Current Plan</div></div>
+<div class="plan pop"><div style="display:flex;justify-content:space-between;align-items:center"><div class="plantit">Family <span class="badge new">Popular</span></div><div class="planpr">$4.99/mo</div></div><div class="planfs">Unlimited members • Voice msg • Photos • Private chat • Geofence</div><div class="planbtn pri">Upgrade</div></div>
+<div class="plan"><div style="display:flex;justify-content:space-between"><div class="plantit">Smart</div><div class="planpr">$9.99/mo</div></div><div class="planfs">+ Health tracking • Anomaly detection • AI weekly summary</div><div class="planbtn out">Upgrade</div></div>
+<div class="plan"><div style="display:flex;justify-content:space-between"><div class="plantit">Premium</div><div class="planpr">$14.99/mo</div></div><div class="planfs">+ AI voice calls • Mood tracking • Memory book • Topic tracking</div><div class="planbtn out">Upgrade</div></div>
+</div>
+</div></div><div class="phlbl">Phonebook + Paywall <span class="badge new">V1.5</span></div></div>
+</div></div>
+
+<!-- ==================== V2.0 ==================== -->
+<div class="sec" id="v20">
+<p class="ver-desc">Health sensing: HealthKit steps, activity tracking, anomaly detection (σ-deviation), AI weekly summary</p>
+<div class="phones">
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;color:var(--pri);font-weight:600">‹ Back</span><span style="font-size:16px;font-weight:700;color:var(--txt)">❤️ Health</span><span style="width:50px"></span></div>
+<div class="cd"><div class="sectt">Steps Today</div><div class="hlg">3,247 <span style="font-size:14px;color:var(--txt2)">steps</span> <span class="tr dn">↓ 12%</span></div></div>
+<div class="cd"><div class="sectt">7-Day Trend</div><div class="bars" id="stepbars"></div></div>
+<div class="cd"><div class="sectt">Activity (24h)</div><div class="dots" id="actdots"></div><div style="font-size:12px;color:var(--txt2);margin-top:4px">Active 6 of 14 waking hours</div></div>
+<div class="cd"><div class="sectt">😴 Sleep</div><div style="font-size:24px;font-weight:700;color:var(--txt)">7h 20m</div><div style="font-size:12px;color:var(--grn)">Normal range</div></div>
+<div class="anban" id="anban1"><div style="display:flex;justify-content:space-between"><div class="antxt">⚠️ Steps 40% below weekly average</div><div class="andis" onclick="this.closest('.anban').style.display='none'">✕</div></div><div class="ansub">3,247 vs avg 5,412 — Deviation: 1.8σ</div></div>
+<div class="cd"><div class="sectt">📊 Weekly Summary</div><div style="font-size:13px;color:var(--txt);line-height:1.5">Mom had a moderately active week. Steps were consistent Mon-Thu but dipped on Friday. Sleep has been good at ~7 hours. She mentioned enjoying the garden on Wednesday. Suggest checking in about the reduced activity on Friday.</div><div style="font-size:10px;color:var(--txt3);margin-top:6px">Powered by AI</div></div>
+</div></div><div class="phlbl">Health Dashboard <span class="badge new">V2.0</span></div></div>
+
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div class="medh"><div class="em">🏥</div><div class="t">Emergency Medical Card</div></div>
+<div style="background:var(--red-lt);border-radius:10px;padding:10px;margin-bottom:12px;text-align:center"><div style="font-size:12px;color:var(--red)">Show this to emergency responders</div></div>
+<div class="medf"><div class="l">Full Name</div><div class="v">Margaret Robinson</div></div>
+<div class="medf"><div class="l">Date of Birth</div><div class="v">March 15, 1952</div></div>
+<div class="medf"><div class="l">Blood Type</div><div class="v" style="font-size:24px;font-weight:700;color:var(--red)">A+</div></div>
+<div class="medf"><div class="l">Allergies</div><div class="v" style="color:var(--red);font-weight:600">Penicillin, Shellfish</div></div>
+<div class="medf"><div class="l">Current Medications</div><div class="v">Lisinopril 10mg (daily)<br>Vitamin D 1000IU</div></div>
+<div class="medf"><div class="l">Emergency Contact</div><div class="v">Sarah Robinson — (555) 012-3456</div></div>
+<div class="medf"><div class="l">Doctor</div><div class="v">Dr. James Chen — (555) 789-0123</div></div>
+<div class="medf"><div class="l">Insurance</div><div class="v">Medicare #1EG4-TE5-MK72</div></div>
+</div></div><div class="phlbl">Medical Card (Parent) <span class="badge new">V2.0</span></div></div>
+</div></div>
+
+<!-- ==================== V2.5 ==================== -->
+<div class="sec" id="v25">
+<p class="ver-desc">AI brain: daily insights, action suggestions, conversational queries, memory book, mood diary</p>
+<div class="phones">
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;color:var(--pri);font-weight:600">‹ Back</span><span style="font-size:16px;font-weight:700;color:var(--txt)">🧠 AI Insights</span><span style="width:50px"></span></div>
+<div class="cd">
+<div class="insd"><div class="d" style="background:var(--grn)"></div><div class="s">Good Day</div><div style="font-size:11px;color:var(--txt3);margin-left:auto">Today</div></div>
+<div class="inssum">Mom had an active day. Steps above average at 4,200, checked in on time at 9:12 AM with a positive mood. She mentioned enjoying the garden and making soup for dinner.</div>
+<div class="insbl">✅ Steps 4,200 — above 7-day average</div>
+<div class="insbl">😊 Mood: Great — consistent this week</div>
+<div class="insbl">🌱 Mentioned gardening (3rd time this week)</div>
+<div class="inssg"><div class="t">💚 No action needed — Mom is doing well!</div></div>
+<div class="inswa"><div class="t">🌡️ Temperature dropping 18°F tomorrow. Suggest checking Mom's heating.</div></div>
+</div>
+<div class="sectt" style="margin-top:8px">Past Insights</div>
+<div class="cd" style="padding:10px"><div class="insd"><div class="d" style="background:var(--wrn)"></div><div class="s" style="font-size:13px">Watch</div><div style="font-size:10px;color:var(--txt3);margin-left:auto">Yesterday</div></div><div style="font-size:12px;color:var(--txt2)">Steps below average. Mom stayed home due to rain.</div></div>
+<div class="cd" style="padding:10px"><div class="insd"><div class="d" style="background:var(--grn)"></div><div class="s" style="font-size:13px">Good</div><div style="font-size:10px;color:var(--txt3);margin-left:auto">2 days ago</div></div><div style="font-size:12px;color:var(--txt2)">Active day. Walked to the park with neighbor Mrs. Chen.</div></div>
+<div style="text-align:center;margin-top:12px"><div style="background:var(--pri);color:#fff;padding:10px 24px;border-radius:20px;display:inline-block;font-weight:700;font-size:14px">🤖 Ask AI a Question</div></div>
+</div></div><div class="phlbl">AI Insights <span class="badge new">V2.5</span></div></div>
+
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div class="sectt">🤖 AI Chat</div>
+<div class="chips"><span class="chip" onclick="showAIResp(0)">How was Mom this week?</span><span class="chip" onclick="showAIResp(1)">Sleep patterns?</span><span class="chip" onclick="showAIResp(2)">Activity trends?</span></div>
+<div id="ai-chat">
+<div class="bub own"><div class="bmsg own"><div class="btxt">How was Mom this week?</div></div></div>
+<div class="bub"><div class="bavt">🤖</div><div class="bmsg oth"><div class="btxt" id="ai-resp">Mom had a good week overall! She checked in every day, with an average mood of "Great" (5/7 days). Steps averaged 3,800/day, slightly below her baseline of 4,200. She mentioned enjoying gardening and cooking beef stew. One concern: Friday's activity was lower than usual.</div></div></div>
+</div>
+<div style="border-top:2px solid var(--bdr);margin-top:16px;padding-top:12px">
+<div class="sectt">📖 Memory Book</div>
+<div style="font-size:11px;color:var(--txt3);font-weight:600;margin-bottom:8px">March 2026</div>
+<div class="cd" style="padding:10px"><div style="font-size:10px;color:var(--txt3)">Mar 24 • 😊</div><div style="font-size:12px;color:var(--pri);margin:2px 0">What are you planning to cook today?</div><div style="font-size:14px;color:var(--txt);font-style:italic">"I made beef stew, your favorite recipe!"</div></div>
+<div class="cd" style="padding:10px"><div style="font-size:10px;color:var(--txt3)">Mar 23 • 😊</div><div style="font-size:12px;color:var(--pri);margin:2px 0">Did you go outside today?</div><div style="font-size:14px;color:var(--txt);font-style:italic">"Went to the park with Mrs. Chen. Beautiful weather!"</div></div>
+<div class="cd" style="padding:10px"><div style="font-size:10px;color:var(--txt3)">Mar 22 • 😐</div><div style="font-size:12px;color:var(--pri);margin:2px 0">What made you smile recently?</div><div style="font-size:14px;color:var(--txt);font-style:italic">"My grandson drew me a picture of our garden"</div></div>
+<div style="text-align:center;font-size:12px;color:var(--txt3);padding:8px">Export as PDF 📄</div>
+</div>
+</div></div><div class="phlbl">AI Chat + Memory Book <span class="badge new">V2.5</span></div></div>
+</div></div>
+
+<!-- ==================== V3.0 ==================== -->
+<div class="sec" id="v30">
+<p class="ver-desc">AI voice calls: Twilio → Deepgram STT → DeepSeek → TTS, call summaries, mood tracking, topic memory</p>
+<div class="phones">
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;color:var(--pri);font-weight:600">‹ Back</span><span style="font-size:16px;font-weight:700;color:var(--txt)">📞 Voice Calls</span><span style="width:50px"></span></div>
+<div class="cd">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:16px;font-weight:700;color:var(--txt)">📞 Today's Call with Mom</div><div style="font-size:13px;color:var(--txt2)">4:32</div></div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div style="font-size:28px">😊</div><div><div style="font-size:18px;font-weight:700;color:var(--grn)">8/10</div><div style="font-size:11px;color:var(--txt2)">Mood Score</div></div></div>
+<div style="font-size:13px;color:var(--txt);line-height:1.4;margin-bottom:10px">Mom was in great spirits today. She talked about working in the garden and mentioned her knee is feeling much better. She's excited about her grandson's visit next weekend.</div>
+<div style="margin-bottom:8px"><span class="tpill pos">Garden 🌱</span><span class="tpill neg">Knee pain 🦵</span><span class="tpill pos">Grandson visit 👦</span><span class="tpill neu">Weather ☀️</span></div>
+<div style="font-size:12px;font-weight:600;color:var(--txt);margin-bottom:6px">Highlights:</div>
+<div style="font-size:12px;color:var(--txt2);padding:4px 0;border-bottom:1px solid var(--bdr)">⭐ 1:23 — "My knee is feeling so much better this week!"</div>
+<div style="font-size:12px;color:var(--txt2);padding:4px 0;border-bottom:1px solid var(--bdr)">⭐ 3:45 — "Can't wait to see little Tommy next Saturday"</div>
+</div>
+<div class="cd"><div class="sectt">30-Day Mood Trend</div><div class="mchart"><div class="mzone g"></div><div class="mzone y"></div><div class="mzone r"></div><svg width="100%" height="100%" id="moodsvg" style="position:absolute;top:0;left:0"></svg></div></div>
+<div class="cd"><div class="sectt">Topic Tracker</div>
+<div class="trow"><div class="tdot" style="background:var(--grn)"></div><div class="tnm">Garden</div><div class="tcnt">12 mentions</div></div>
+<div class="trow"><div class="tdot" style="background:var(--wrn)"></div><div class="tnm">Knee pain</div><div class="tcnt">8 mentions</div></div>
+<div class="trow"><div class="tdot" style="background:var(--grn)"></div><div class="tnm">Grandson Tommy</div><div class="tcnt">6 mentions</div></div>
+<div class="trow"><div class="tdot" style="background:var(--grn)"></div><div class="tnm">Cooking</div><div class="tcnt">5 mentions</div></div>
+<div class="trow"><div class="tdot" style="background:var(--txt3)"></div><div class="tnm">Sleep</div><div class="tcnt">3 mentions</div></div>
+</div>
+<div class="cd"><div class="sectt">💬 Send Message via AI</div><div class="msginp"><input placeholder="AI will relay this to Mom..."><button>Send</button></div><div style="font-size:10px;color:var(--txt3);margin-top:4px">AI will naturally include this in tomorrow's call</div></div>
+</div></div><div class="phlbl">Voice Calls Dashboard <span class="badge new">V3.0</span></div></div>
+
+<div class="ph"><div class="frame"><div class="notch"></div><div class="scr">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;color:var(--pri);font-weight:600">‹ Back</span><span style="font-size:16px;font-weight:700;color:var(--txt)">Call Transcript</span><span style="width:50px"></span></div>
+<div style="display:flex;gap:12px;margin-bottom:12px"><div style="background:var(--grn-lt);padding:6px 12px;border-radius:10px"><div style="font-size:11px;color:var(--txt2)">Mood</div><div style="font-size:16px;font-weight:700;color:var(--grn)">😊 8/10</div></div><div style="background:var(--bg);padding:6px 12px;border-radius:10px"><div style="font-size:11px;color:var(--txt2)">Duration</div><div style="font-size:16px;font-weight:700;color:var(--txt)">4:32</div></div></div>
+<div style="margin-bottom:12px"><span class="tpill pos">Garden</span><span class="tpill neg">Knee</span><span class="tpill pos">Grandson</span></div>
+<div class="tline"><div class="tspk ai">🤖 AI</div><div class="ttxt">Good afternoon, Margaret! How are you doing today?</div></div>
+<div class="tline"><div class="tspk mom">👵 Mom</div><div class="ttxt">Oh hello dear! I'm doing wonderfully. I spent the whole morning in the garden.</div></div>
+<div class="tline"><div class="tspk ai">🤖 AI</div><div class="ttxt">That's lovely! Your garden has been keeping you busy this week. How are the tomatoes coming along?</div></div>
+<div class="tline"><div class="tspk mom">👵 Mom</div><div class="ttxt">Oh they're growing beautifully! I think I'll have enough to make sauce next week. Sarah loves my tomato sauce.</div></div>
+<div class="tline hi"><div class="tspk mom">👵 Mom</div><div class="ttxt">And you know what? My knee is feeling so much better this week! I can kneel down in the garden without any trouble now. ⭐</div></div>
+<div class="tline"><div class="tspk ai">🤖 AI</div><div class="ttxt">That's wonderful news about your knee! Sarah will be so happy to hear that. Speaking of Sarah, she wanted me to tell you she's thinking of you.</div></div>
+<div class="tline"><div class="tspk mom">👵 Mom</div><div class="ttxt">Oh that's so sweet. Tell her I love her. Oh! And Tommy is coming to visit next Saturday!</div></div>
+<div class="tline hi"><div class="tspk mom">👵 Mom</div><div class="ttxt">Can't wait to see little Tommy next Saturday. I'm going to bake his favorite cookies! ⭐</div></div>
+<div class="tline"><div class="tspk ai">🤖 AI</div><div class="ttxt">How exciting! I'm sure Tommy will love that. What kind of cookies does he like best?</div></div>
+<div class="tline"><div class="tspk mom">👵 Mom</div><div class="ttxt">Chocolate chip, of course! Just like his mother when she was little.</div></div>
+<div style="text-align:center;padding:12px"><div style="font-size:12px;color:var(--txt3)">End of call — 4:32</div></div>
+</div></div><div class="phlbl">Call Transcript <span class="badge new">V3.0</span></div></div>
+</div></div>
+
+<script>
+// Date
+document.getElementById('pdate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+// Daily question
+var qs=["What are you planning to cook today?","What was the happiest trip you've ever taken?","What made you smile recently?","If you could travel anywhere, where would you go?"];
+document.getElementById('dq').textContent=qs[new Date().getDate()%qs.length];
+// Week calendar
+var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],now=new Date(),dow=now.getDay(),mo=(dow+6)%7,mn=new Date(now);mn.setDate(now.getDate()-mo);
+var st=['g','g','o',null,'g',null,null],h='';
+for(var i=0;i<7;i++){var d=new Date(mn);d.setDate(mn.getDate()+i);var t=i===mo,f=d>now&&!t;var ic,bg;if(f){ic='—';bg='var(--bdr)'}else if(t){ic='✅';bg='rgba(39,174,96,.15)'}else if(st[i]){ic='✅';bg=st[i]==='g'?'rgba(39,174,96,.15)':'rgba(243,156,18,.15)'}else{ic='⚠️';bg='var(--red-lt)'}h+='<div class="dc"><div class="dl'+(t?' td':'')+'">'+days[i]+'</div><div class="dcir" style="background:'+bg+'">'+ic+'</div><div class="dd">'+d.getDate()+'</div></div>'}
+document.getElementById('wkcal').innerHTML=h;
+// Step bars
+var steps=[4200,3800,5100,4600,3247,0,0],dl=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],mx=5100,bh='';
+for(var i=0;i<7;i++){var s=steps[i],pct=s?Math.max((s/mx)*100,5):0,cl=s>4000?'var(--grn)':s>3000?'var(--wrn)':'var(--red)';if(!s){cl='var(--bdr)';pct=5}bh+='<div style="flex:1;text-align:center"><div style="height:120px;display:flex;align-items:flex-end"><div class="bar" style="width:100%;height:'+pct+'%;background:'+cl+'"></div></div><div class="barlbl">'+dl[i]+'</div><div class="barv">'+(s?s.toLocaleString():'—')+'</div></div>'}
+document.getElementById('stepbars').innerHTML=bh;
+// Activity dots
+var act=[0,0,0,0,0,0,1,1,0,1,1,0,1,0,1,0,0,1,0,0,0,0,0,0],adh='';
+for(var i=0;i<24;i++){adh+='<div class="dot" style="background:'+(act[i]?'var(--sec)':'var(--bdr)')+'" title="'+i+':00"></div>'}
+document.getElementById('actdots').innerHTML=adh;
+// Mood SVG
+var moodData=[7,8,6,7,8,9,7,6,8,7,8,7,6,5,7,8,9,8,7,8,6,7,8,7,8,9,7,8,8,8];
+var svg=document.getElementById('moodsvg'),w=svg.parentElement.offsetWidth||300,ht=140;
+var pts=[];for(var i=0;i<moodData.length;i++){var x=(i/(moodData.length-1))*w,y=ht-(moodData[i]/10)*ht;pts.push(x+','+y);var cl=moodData[i]>=7?'var(--grn)':moodData[i]>=4?'var(--wrn)':'var(--red)';svg.innerHTML+='<circle cx="'+x+'" cy="'+y+'" r="3" fill="'+cl+'"/>'}
+svg.innerHTML='<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--sec)" stroke-width="1.5" opacity="0.6"/>'+svg.innerHTML;
+// Navigation
+function showVer(id){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.vt').forEach(b=>b.classList.remove('on'));event.target.classList.add('on')}
+// V1.0 check-in
+function doCI(m){document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('sel'));document.querySelector('.mbtn.'+(m==='g'?'g':m==='o'?'o':'r')).classList.add('sel');setTimeout(()=>{document.getElementById('mood-sec').classList.add('hidden');document.getElementById('ci-done').classList.remove('hidden');setTimeout(()=>{document.getElementById('ci-done').classList.add('hidden');document.getElementById('q-sec').classList.remove('hidden')},1500)},400)}
+function skipQ(){document.getElementById('q-sec').classList.add('hidden')}
+function ansQ(){document.getElementById('q-sec').classList.add('hidden');document.getElementById('q-done').classList.remove('hidden')}
+// V1.5 tabs
+function switchTab(t){document.getElementById('tab-all').classList.toggle('on',t==='all');document.getElementById('tab-fc').classList.toggle('on',t==='fc');document.getElementById('msgs-all').classList.toggle('hidden',t!=='all');document.getElementById('msgs-fc').classList.toggle('hidden',t!=='fc');document.getElementById('pvban').classList.toggle('hidden',t!=='fc')}
+// V2.5 AI responses
+var aiResps=["Mom had a good week overall! Checked in every day, average mood \"Great\" (5/7 days). Steps averaged 3,800/day. She enjoyed gardening and cooking. Friday activity was lower than usual.","Mom's sleep has been consistent this week — averaging 7h 15m per night. Tuesday was her best night at 8h 10m. No significant disruptions detected. This is within her normal baseline range.","Activity trend shows a slight decline over the past 2 weeks. Average steps went from 4,200 to 3,800. However, active hours remained steady at 6-7 per day. The step decrease may be weather-related (rain on 3 days)."];
+function showAIResp(i){document.getElementById('ai-resp').textContent=aiResps[i]}
+</script>
+</body>
+</html>
