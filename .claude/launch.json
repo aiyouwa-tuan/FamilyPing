@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "familyping-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "preview", "-l", "8082"],
+      "port": 8082
+    },
+    {
+      "name": "familyping-web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--web", "--port", "8081"],
+      "port": 8081
+    }
+  ]
+}

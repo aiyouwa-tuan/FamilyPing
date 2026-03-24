@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FamilyPing - Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #FFF8F0;
+      --card: #FFFFFF;
+      --primary: #FF6B35;
+      --primary-light: #FFF0E8;
+      --secondary: #4ECDC4;
+      --secondary-light: #E8FAF8;
+      --text: #2D3436;
+      --text-secondary: #636E72;
+      --text-light: #B2BEC3;
+      --border: #F0E6D8;
+      --danger: #E74C3C;
+      --danger-light: #FDEDEC;
+      --success: #27AE60;
+      --success-light: #E8F8F0;
+      --warning: #F39C12;
+      --warning-light: #FEF5E7;
+      --mood-great: #27AE60;
+      --mood-ok: #F39C12;
+      --mood-not-great: #E74C3C;
+      --radius: 16px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1.page-title {
+      color: #fff;
+      font-size: 28px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    p.page-subtitle {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      padding: 10px 24px;
+      border-radius: 24px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: transparent;
+      color: #ccc;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .tab-btn:hover:not(.active) {
+      border-color: rgba(255,255,255,0.5);
+      color: #fff;
+    }
+    .phones-container {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .phone-frame {
+      width: 375px;
+      min-height: 750px;
+      background: var(--bg);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+      border: 8px solid #333;
+    }
+    .phone-label {
+      text-align: center;
+      color: #aaa;
+      font-size: 13px;
+      margin-top: 12px;
+      font-weight: 500;
+    }
+    .phone-notch {
+      width: 150px;
+      height: 28px;
+      background: #333;
+      border-radius: 0 0 20px 20px;
+      margin: 0 auto;
+    }
+    .screen {
+      padding: 20px;
+      display: none;
+    }
+    .screen.active { display: block; }
+
+    /* Shared */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .gap { margin-bottom: 16px; }
+
+    /* ===== WELCOME SCREEN ===== */
+    .welcome-header { text-align: center; padding: 40px 0 32px; }
+    .welcome-logo { font-size: 64px; margin-bottom: 12px; }
+    .welcome-title { font-size: 36px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+    .welcome-subtitle { font-size: 18px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; }
+    .role-card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 28px;
+      text-align: center;
+      margin-bottom: 16px;
+      cursor: pointer;
+      border: 2px solid var(--primary-light);
+      transition: all 0.2s;
+    }
+    .role-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .role-card.parent-role { border-color: var(--secondary-light); }
+    .role-card .emoji { font-size: 48px; margin-bottom: 8px; }
+    .role-card .title { font-size: 22px; font-weight: 700; color: var(--text); }
+    .role-card .desc { font-size: 16px; color: var(--text-secondary); margin-top: 4px; }
+    .role-badge {
+      display: inline-block; padding: 4px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 600; margin-top: 12px;
+      background: var(--primary-light); color: var(--primary);
+    }
+    .role-card.parent-role .role-badge { background: var(--secondary-light); color: var(--secondary); }
+    .demo-note { text-align: center; font-size: 14px; color: var(--text-light); margin-top: 24px; }
+
+    /* ===== PARENT HOME ===== */
+    .greeting { font-size: 32px; font-weight: 800; color: var(--text); }
+    .date-text { font-size: 18px; color: var(--text-secondary); margin-top: 4px; }
+    .weather-card {
+      background: #E3F2FD;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .weather-row { display: flex; align-items: center; gap: 16px; }
+    .weather-icon { font-size: 56px; }
+    .weather-temp { font-size: 48px; font-weight: 700; color: var(--text); }
+    .weather-desc { font-size: 20px; color: var(--text-secondary); }
+    .weather-details { display: flex; justify-content: space-between; margin-top: 8px; font-size: 16px; color: var(--text-secondary); }
+    .message-bubble {
+      background: var(--primary-light);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .message-label { font-size: 16px; color: var(--primary); font-weight: 600; margin-bottom: 4px; }
+    .message-content { font-size: 20px; color: var(--text); line-height: 1.5; }
+    .mood-title { font-size: 20px; font-weight: 600; color: var(--text); text-align: center; margin-bottom: 16px; }
+    .mood-buttons { display: flex; gap: 12px; margin-bottom: 16px; }
+    .mood-btn {
+      flex: 1; padding: 20px 8px; border-radius: var(--radius);
+      text-align: center; cursor: pointer; border: 2px solid;
+      background: var(--card); transition: all 0.2s;
+      min-height: 100px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px;
+    }
+    .mood-btn .emoji { font-size: 48px; }
+    .mood-btn .label { font-size: 16px; font-weight: 700; }
+    .mood-btn.great { border-color: var(--mood-great); }
+    .mood-btn.great .label { color: var(--mood-great); }
+    .mood-btn.great.selected { background: var(--mood-great); }
+    .mood-btn.great.selected .label { color: #fff; }
+    .mood-btn.ok { border-color: var(--mood-ok); }
+    .mood-btn.ok .label { color: var(--mood-ok); }
+    .mood-btn.ok.selected { background: var(--mood-ok); }
+    .mood-btn.ok.selected .label { color: #fff; }
+    .mood-btn.not-great { border-color: var(--mood-not-great); }
+    .mood-btn.not-great .label { color: var(--mood-not-great); }
+    .mood-btn.not-great.selected { background: var(--mood-not-great); }
+    .mood-btn.not-great.selected .label { color: #fff; }
+    .mood-btn:hover { transform: scale(1.03); }
+
+    .checkin-done {
+      background: var(--success-light); border-radius: var(--radius);
+      padding: 28px; text-align: center; margin-bottom: 16px;
+    }
+    .checkin-done .emoji { font-size: 48px; }
+    .checkin-done .text { font-size: 20px; color: var(--success); font-weight: 600; margin-top: 8px; }
+
+    .question-card {
+      background: var(--secondary-light); border-radius: var(--radius);
+      padding: 20px; margin-bottom: 16px;
+    }
+    .question-label { font-size: 16px; color: var(--secondary); font-weight: 600; margin-bottom: 4px; }
+    .question-text { font-size: 20px; color: var(--text); font-weight: 600; margin-bottom: 16px; line-height: 1.4; }
+    .question-input {
+      width: 100%; border: none; background: var(--card); border-radius: 12px;
+      padding: 14px; font-size: 16px; min-height: 80px; resize: vertical;
+      font-family: inherit;
+    }
+    .question-actions { display: flex; justify-content: space-between; margin-top: 12px; }
+    .skip-btn { padding: 8px 20px; background: none; border: none; font-size: 16px; color: var(--text-secondary); cursor: pointer; }
+    .send-btn {
+      padding: 8px 28px; background: var(--secondary); border: none; border-radius: 12px;
+      font-size: 16px; color: #fff; font-weight: 700; cursor: pointer;
+    }
+    .sos-button {
+      background: var(--danger-light); border-radius: var(--radius); padding: 20px;
+      text-align: center; border: 2px solid var(--danger); cursor: pointer;
+      margin-bottom: 16px; transition: all 0.2s;
+    }
+    .sos-button:active { background: #F5C6CB; }
+    .sos-button .emoji { font-size: 32px; }
+    .sos-button .text { font-size: 18px; font-weight: 700; color: var(--danger); }
+    .sos-button .hint { font-size: 14px; color: var(--danger); opacity: 0.7; }
+
+    /* ===== FAMILY DASHBOARD ===== */
+    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .app-name { font-size: 24px; font-weight: 800; color: var(--primary); }
+    .family-name { font-size: 14px; color: var(--text-secondary); }
+    .avatar-circle {
+      width: 44px; height: 44px; border-radius: 22px; background: var(--primary-light);
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+    }
+    .parent-card-header { display: flex; align-items: center; gap: 16px; }
+    .parent-avatar { font-size: 48px; }
+    .parent-name { font-size: 24px; font-weight: 700; color: var(--text); }
+    .status-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 4px; }
+    .status-text { font-size: 16px; color: var(--text-secondary); }
+    .mood-row-dash { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .mood-emoji-dash { font-size: 28px; }
+    .mood-text-dash { font-size: 18px; font-weight: 600; }
+    .streak-text { font-size: 16px; color: var(--primary); font-weight: 600; margin-top: 8px; }
+    .answer-card-inner {
+      background: var(--primary-light); border-radius: 12px; padding: 14px; margin-top: 16px;
+    }
+    .answer-label { font-size: 13px; color: var(--primary); font-weight: 600; margin-bottom: 4px; }
+    .answer-text { font-size: 16px; color: var(--text); font-style: italic; line-height: 1.4; }
+
+    .week-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+    .week-row { display: flex; justify-content: space-between; }
+    .day-col { text-align: center; }
+    .day-label { font-size: 12px; color: var(--text-secondary); font-weight: 600; margin-bottom: 6px; }
+    .day-label.today { color: var(--primary); font-weight: 800; }
+    .day-circle {
+      width: 40px; height: 40px; border-radius: 20px; display: flex;
+      align-items: center; justify-content: center; font-size: 16px; margin: 0 auto 4px;
+    }
+    .day-date { font-size: 11px; color: var(--text-light); }
+
+    .stats-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    .stat-card {
+      flex: 1; background: var(--card); border-radius: var(--radius);
+      padding: 14px; text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .stat-emoji { font-size: 24px; margin-bottom: 4px; }
+    .stat-value { font-size: 18px; font-weight: 700; color: var(--text); }
+    .stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+    .actions-row { display: flex; gap: 12px; margin-bottom: 16px; }
+    .action-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px; border-radius: var(--radius); border: none; cursor: pointer;
+      font-size: 16px; font-weight: 700; color: #fff;
+    }
+    .action-btn.call { background: var(--primary); }
+    .action-btn.msg { background: var(--secondary); }
+
+    .msg-input-row { display: flex; gap: 8px; }
+    .msg-input {
+      flex: 1; background: var(--bg); border: none; border-radius: 12px;
+      padding: 14px; font-size: 16px; font-family: inherit;
+    }
+    .msg-send {
+      background: var(--primary); border: none; border-radius: 12px;
+      padding: 14px 24px; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
+    }
+
+    .pro-card {
+      background: var(--card); border-radius: var(--radius); padding: 20px;
+      display: flex; align-items: center; gap: 16px;
+      border: 1px dashed var(--border); margin-bottom: 16px;
+    }
+    .pro-emoji { font-size: 32px; }
+    .pro-info { flex: 1; }
+    .pro-title { font-size: 16px; font-weight: 700; color: var(--text); }
+    .pro-desc { font-size: 14px; color: var(--text-secondary); margin-top: 2px; }
+    .pro-badge {
+      background: var(--warning-light); padding: 4px 10px; border-radius: 8px;
+      font-size: 12px; font-weight: 700; color: var(--warning);
+    }
+
+    .back-link {
+      text-align: center; padding: 16px; font-size: 14px;
+      color: var(--text-light); cursor: pointer; margin-top: 8px;
+    }
+    .section-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+
+    .history-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .history-date { font-size: 14px; color: var(--text-secondary); width: 90px; }
+    .history-mood { font-size: 20px; }
+    .history-time { font-size: 14px; color: var(--text-secondary); flex: 1; }
+    .history-answer { font-size: 12px; color: var(--primary); }
+
+    .sent-msg { background: var(--success-light); border-radius: 12px; padding: 14px; text-align: center; }
+    .sent-msg-text { font-size: 16px; color: var(--success); font-weight: 600; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">🏠 FamilyPing — App Preview</h1>
+  <p class="page-subtitle">Interactive prototype of the V1.0 mobile app</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showScreen('welcome')">Welcome</button>
+    <button class="tab-btn" onclick="showScreen('parent')">Parent View</button>
+    <button class="tab-btn" onclick="showScreen('family')">Child View</button>
+  </div>
+
+  <div class="phones-container">
+
+    <!-- ===== WELCOME SCREEN ===== -->
+    <div id="welcome-phone">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="screen active" id="screen-welcome">
+          <div class="welcome-header">
+            <div class="welcome-logo">🏠</div>
+            <div class="welcome-title">FamilyPing</div>
+            <div class="welcome-subtitle">Know your parents are OK.<br>Every day.</div>
+          </div>
+          <div class="role-card" onclick="showScreen('family')">
+            <div class="emoji">👩</div>
+            <div class="title">I'm a Family Member</div>
+            <div class="desc">I want to check on my parents</div>
+            <div class="role-badge">Child / Sibling</div>
+          </div>
+          <div class="role-card parent-role" onclick="showScreen('parent')">
+            <div class="emoji">👵</div>
+            <div class="title">I'm a Parent</div>
+            <div class="desc">My child invited me to join</div>
+            <div class="role-badge">Parent</div>
+          </div>
+          <div class="demo-note">Demo Mode — No login required</div>
+        </div>
+      </div>
+      <div class="phone-label">Welcome Screen</div>
+    </div>
+
+    <!-- ===== PARENT HOME ===== -->
+    <div id="parent-phone" class="hidden">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="screen active" id="screen-parent">
+          <div class="gap">
+            <div class="greeting">Good morning, Mom!</div>
+            <div class="date-text" id="parent-date"></div>
+          </div>
+
+          <div class="weather-card">
+            <div class="weather-row">
+              <div class="weather-icon">⛅</div>
+              <div>
+                <div class="weather-temp">72°F</div>
+                <div class="weather-desc">Partly Cloudy</div>
+              </div>
+            </div>
+            <div class="weather-details">
+              <span>H: 78°  L: 65°</span>
+              <span>Rain: 20%</span>
+            </div>
+          </div>
+
+          <div class="message-bubble">
+            <div class="message-label">💌 From Sarah</div>
+            <div class="message-content">Love you mom! Have a great day today! 💕</div>
+          </div>
+
+          <!-- Mood Selector (before check-in) -->
+          <div id="mood-section">
+            <div class="mood-title">How are you feeling today?</div>
+            <div class="mood-buttons">
+              <div class="mood-btn great" onclick="doCheckin('great')">
+                <div class="emoji">😊</div>
+                <div class="label">Great</div>
+              </div>
+              <div class="mood-btn ok" onclick="doCheckin('ok')">
+                <div class="emoji">😐</div>
+                <div class="label">OK</div>
+              </div>
+              <div class="mood-btn not-great" onclick="doCheckin('not_great')">
+                <div class="emoji">😔</div>
+                <div class="label">Not great</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Check-in done -->
+          <div id="checkin-done" class="hidden">
+            <div class="checkin-done">
+              <div class="emoji">✅</div>
+              <div class="text">Sent! Your family knows you're OK</div>
+            </div>
+          </div>
+
+          <!-- Daily Question -->
+          <div id="question-section" class="hidden">
+            <div class="question-card">
+              <div class="question-label">📝 Today's Question</div>
+              <div class="question-text" id="daily-question"></div>
+              <textarea class="question-input" id="question-answer" placeholder="Type your answer..."></textarea>
+              <div class="question-actions">
+                <button class="skip-btn" onclick="skipQuestion()">Skip</button>
+                <button class="send-btn" onclick="answerQuestion()">Send 💌</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question answered -->
+          <div id="question-done" class="hidden">
+            <div class="checkin-done" style="background: var(--secondary-light);">
+              <div class="text" style="color: var(--secondary);">✅ Answer sent to your family!</div>
+            </div>
+          </div>
+
+          <div class="sos-button">
+            <div class="emoji">🆘</div>
+            <div class="text">Hold for Emergency</div>
+            <div class="hint">Hold 3 seconds to send SOS</div>
+          </div>
+
+          <div class="back-link" onclick="showScreen('welcome')">← Back to Demo Menu</div>
+        </div>
+      </div>
+      <div class="phone-label">Parent's Phone (Large Text Mode)</div>
+    </div>
+
+    <!-- ===== FAMILY DASHBOARD ===== -->
+    <div id="family-phone" class="hidden">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="screen active" id="screen-family">
+          <div class="dash-header">
+            <div>
+              <div class="app-name">FamilyPing</div>
+              <div class="family-name">Robinson Family</div>
+            </div>
+            <div class="avatar-circle">👩</div>
+          </div>
+
+          <!-- Parent Status Card -->
+          <div class="card">
+            <div class="parent-card-header">
+              <div class="parent-avatar">👵</div>
+              <div>
+                <div class="parent-name">Mom</div>
+                <div class="status-row">
+                  <div class="status-dot" style="background: var(--mood-great)"></div>
+                  <div class="status-text">Checked in at 9:15 AM</div>
+                </div>
+              </div>
+            </div>
+            <div class="mood-row-dash">
+              <div class="mood-emoji-dash">😊</div>
+              <div class="mood-text-dash" style="color: var(--mood-great)">Feeling Great</div>
+            </div>
+            <div class="streak-text">🔥 12-day streak</div>
+            <div class="answer-card-inner">
+              <div class="answer-label">📝 Today's answer:</div>
+              <div class="answer-text">"I made beef stew, your favorite recipe!"</div>
+            </div>
+          </div>
+
+          <!-- Week Calendar -->
+          <div class="card">
+            <div class="week-title">This Week</div>
+            <div class="week-row" id="week-calendar"></div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-emoji">⏱</div>
+              <div class="stat-value">9:22 AM</div>
+              <div class="stat-label">Avg check-in</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-emoji">🔥</div>
+              <div class="stat-value">12</div>
+              <div class="stat-label">Day streak</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-emoji">😊</div>
+              <div class="stat-value">5</div>
+              <div class="stat-label">Great days</div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="actions-row">
+            <button class="action-btn call">📞 Call Mom</button>
+            <button class="action-btn msg" onclick="toggleHistory()">📋 History</button>
+          </div>
+
+          <!-- History (toggle) -->
+          <div id="history-section" class="hidden">
+            <div class="card">
+              <div class="section-title">Check-in History</div>
+              <div id="history-list"></div>
+            </div>
+          </div>
+
+          <!-- Send Message -->
+          <div class="card">
+            <div class="section-title">💬 Send Mom a Message</div>
+            <div id="msg-form">
+              <div class="msg-input-row">
+                <input class="msg-input" id="family-msg" placeholder="Type a message for Mom..." />
+                <button class="msg-send" onclick="sendFamilyMsg()">Send</button>
+              </div>
+            </div>
+            <div id="msg-sent" class="hidden">
+              <div class="sent-msg"><div class="sent-msg-text">✅ Message sent!</div></div>
+            </div>
+          </div>
+
+          <!-- PRO Card -->
+          <div class="pro-card">
+            <div class="pro-emoji">👨‍👩‍👧</div>
+            <div class="pro-info">
+              <div class="pro-title">Invite Family Members</div>
+              <div class="pro-desc">Add siblings to share caregiving</div>
+            </div>
+            <div class="pro-badge">PRO</div>
+          </div>
+
+          <div class="back-link" onclick="showScreen('welcome')">← Back to Demo Menu</div>
+        </div>
+      </div>
+      <div class="phone-label">Child's Phone (Dashboard)</div>
+    </div>
+  </div>
+
+  <script>
+    // Date
+    const now = new Date();
+    document.getElementById('parent-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+    // Daily question
+    const questions = [
+      "What was the happiest trip you've ever taken?",
+      "What are you planning to cook today?",
+      "What made you smile recently?",
+      "If you could travel anywhere, where would you go?",
+      "What was your first job?",
+      "What did you have for breakfast?",
+      "What are you most grateful for today?",
+      "What's your favorite season and why?",
+    ];
+    const dayOfYear = Math.floor((Date.now() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
+    document.getElementById('daily-question').textContent = questions[dayOfYear % questions.length];
+
+    // Week calendar
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const dayOfWeek = now.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(now); monday.setDate(now.getDate() + mondayOffset);
+    const moods = ['great', 'great', 'ok', null, 'great', null, null]; // past week mock
+    const todayIdx = (dayOfWeek + 6) % 7; // Monday = 0
+    let calendarHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday); d.setDate(monday.getDate() + i);
+      const isToday = i === todayIdx;
+      const isFuture = d > now && !isToday;
+      let icon, bg;
+      if (isFuture) { icon = '—'; bg = 'var(--border)'; }
+      else if (isToday) { icon = '✅'; bg = 'rgba(39,174,96,0.15)'; }
+      else if (moods[i] === 'great') { icon = '✅'; bg = 'rgba(39,174,96,0.15)'; }
+      else if (moods[i] === 'ok') { icon = '✅'; bg = 'rgba(243,156,18,0.15)'; }
+      else if (moods[i] === null && !isFuture) { icon = '⚠️'; bg = 'var(--danger-light)'; }
+      else { icon = '—'; bg = 'var(--border)'; }
+      calendarHTML += `
+        <div class="day-col">
+          <div class="day-label ${isToday ? 'today' : ''}">${days[i]}</div>
+          <div class="day-circle" style="background:${bg}">${icon}</div>
+          <div class="day-date">${d.getDate()}</div>
+        </div>`;
+    }
+    document.getElementById('week-calendar').innerHTML = calendarHTML;
+
+    // History
+    const historyData = [
+      { date: 'Mon, Mar 17', mood: '😊', time: '9:12 AM', answer: null },
+      { date: 'Tue, Mar 18', mood: '😊', time: '9:25 AM', answer: null },
+      { date: 'Wed, Mar 19', mood: '😐', time: '9:45 AM', answer: null },
+      { date: 'Fri, Mar 21', mood: '😊', time: '9:08 AM', answer: 'Went to park with Mrs. Chen' },
+      { date: 'Sat, Mar 22', mood: '😊', time: '9:33 AM', answer: null },
+      { date: 'Today', mood: '😊', time: '9:15 AM', answer: 'I made beef stew!' },
+    ];
+    let historyHTML = '';
+    historyData.forEach(h => {
+      historyHTML += `<div class="history-item">
+        <span class="history-date">${h.date}</span>
+        <span class="history-mood">${h.mood}</span>
+        <span class="history-time">${h.time}</span>
+        ${h.answer ? `<span class="history-answer">📝 ${h.answer}</span>` : ''}
+      </div>`;
+    });
+    document.getElementById('history-list').innerHTML = historyHTML;
+
+    // Navigation
+    function showScreen(name) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      event.target?.classList?.add('active') || document.querySelector(`.tab-btn:nth-child(${name === 'welcome' ? 1 : name === 'parent' ? 2 : 3})`).classList.add('active');
+      document.getElementById('welcome-phone').classList.toggle('hidden', name !== 'welcome');
+      document.getElementById('parent-phone').classList.toggle('hidden', name !== 'parent');
+      document.getElementById('family-phone').classList.toggle('hidden', name !== 'family');
+    }
+
+    // Parent check-in
+    function doCheckin(mood) {
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+      document.querySelector(`.mood-btn.${mood === 'not_great' ? 'not-great' : mood}`).classList.add('selected');
+      setTimeout(() => {
+        document.getElementById('mood-section').classList.add('hidden');
+        document.getElementById('checkin-done').classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('checkin-done').classList.add('hidden');
+          document.getElementById('question-section').classList.remove('hidden');
+        }, 1500);
+      }, 500);
+    }
+
+    function skipQuestion() {
+      document.getElementById('question-section').classList.add('hidden');
+    }
+
+    function answerQuestion() {
+      const answer = document.getElementById('question-answer').value;
+      if (answer.trim()) {
+        document.getElementById('question-section').classList.add('hidden');
+        document.getElementById('question-done').classList.remove('hidden');
+      }
+    }
+
+    // Family
+    function toggleHistory() {
+      document.getElementById('history-section').classList.toggle('hidden');
+    }
+
+    function sendFamilyMsg() {
+      const msg = document.getElementById('family-msg').value;
+      if (msg.trim()) {
+        document.getElementById('msg-form').classList.add('hidden');
+        document.getElementById('msg-sent').classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('msg-form').classList.remove('hidden');
+          document.getElementById('msg-sent').classList.add('hidden');
+          document.getElementById('family-msg').value = '';
+        }, 3000);
+      }
+    }
+  </script>
+</body>
+</html>
