@@ -121,6 +121,23 @@ export default function FamilyDashboardScreen() {
           <Text style={styles.healthTap}>Tap to view details</Text>
         </TouchableOpacity>
 
+        {/* AI Insights Card */}
+        <TouchableOpacity
+          style={styles.insightsCard}
+          onPress={() => router.push('/family/insights')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.insightsHeader}>
+            <Text style={styles.insightsEmoji}>{'\uD83E\uDDE0'}</Text>
+            <Text style={styles.insightsTitle}>AI Insights</Text>
+            <View style={styles.insightsStatusDot} />
+          </View>
+          <Text style={styles.insightsSnippet} numberOfLines={2}>
+            Mom had a great day! Checked in on time with a positive mood. Step count is up 12% from last week.
+          </Text>
+          <Text style={styles.insightsTap}>View insights {'\u2192'}</Text>
+        </TouchableOpacity>
+
         {/* Stats Row */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
@@ -338,6 +355,50 @@ const styles = StyleSheet.create({
     fontSize: fonts.tiny,
     color: colors.textLight,
     textAlign: 'right',
+  },
+  insightsCard: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.secondary,
+  },
+  insightsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  insightsEmoji: {
+    fontSize: 20,
+  },
+  insightsTitle: {
+    fontSize: fonts.subtitle,
+    fontWeight: '700',
+    color: colors.text,
+    flex: 1,
+  },
+  insightsStatusDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.success,
+  },
+  insightsSnippet: {
+    fontSize: fonts.small,
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginBottom: spacing.sm,
+  },
+  insightsTap: {
+    fontSize: fonts.small,
+    color: colors.secondary,
+    fontWeight: '600',
   },
   statsRow: {
     flexDirection: 'row',

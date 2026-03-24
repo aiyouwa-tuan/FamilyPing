@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User, Family, Checkin, Message, Mood, WeatherData, DailyMetrics, Anomaly, WeeklySummary } from './types';
+import type { User, Family, Checkin, Message, Mood, WeatherData, DailyMetrics, Anomaly, WeeklySummary, DailyInsight } from './types';
 
 // ============ Auth Store ============
 interface AuthState {
@@ -90,6 +90,33 @@ export const useMetricsStore = create<MetricsState>((set) => ({
   setWeeklyMetrics: (weeklyMetrics) => set({ weeklyMetrics }),
   setAnomalies: (anomalies) => set({ anomalies }),
   setWeeklySummary: (weeklySummary) => set({ weeklySummary }),
+}));
+
+// ============ Insights Store (V2.5) ============
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+interface InsightsState {
+  todayInsight: DailyInsight | null;
+  recentInsights: DailyInsight[];
+  chatMessages: ChatMessage[];
+  setTodayInsight: (insight: DailyInsight | null) => void;
+  setRecentInsights: (insights: DailyInsight[]) => void;
+  setChatMessages: (messages: ChatMessage[]) => void;
+  addChatMessage: (message: ChatMessage) => void;
+}
+
+export const useInsightsStore = create<InsightsState>((set) => ({
+  todayInsight: null,
+  recentInsights: [],
+  chatMessages: [],
+  setTodayInsight: (todayInsight) => set({ todayInsight }),
+  setRecentInsights: (recentInsights) => set({ recentInsights }),
+  setChatMessages: (chatMessages) => set({ chatMessages }),
+  addChatMessage: (message) =>
+    set((state) => ({ chatMessages: [...state.chatMessages, message] })),
 }));
 
 // ============ Mock Data Helpers ============

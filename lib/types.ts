@@ -114,3 +114,22 @@ export interface WeeklySummary {
   summary_text: string;
   highlights: any[];
 }
+
+// ============ V2.5 AI Brain Types ============
+
+export type InsightStatus = 'good' | 'watch' | 'concern';
+
+export interface DailyInsight {
+  id: string;
+  user_id: string;
+  date: string;
+  status: InsightStatus;
+  summary: string;
+  insights: string[];
+  suggestion: {
+    action: string;
+    reason: string;
+    priority: string;
+  };
+  weather_alert: string | null;
+}
