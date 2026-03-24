@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User, Family, Checkin, Message, Mood, WeatherData, DailyMetrics, Anomaly, WeeklySummary, DailyInsight } from './types';
+import type { User, Family, Checkin, Message, Mood, WeatherData, DailyMetrics, Anomaly, WeeklySummary, DailyInsight, VoiceCall, ConversationMemory } from './types';
 
 // ============ Auth Store ============
 interface AuthState {
@@ -117,6 +117,25 @@ export const useInsightsStore = create<InsightsState>((set) => ({
   setChatMessages: (chatMessages) => set({ chatMessages }),
   addChatMessage: (message) =>
     set((state) => ({ chatMessages: [...state.chatMessages, message] })),
+}));
+
+// ============ Voice Store (V3.0) ============
+interface VoiceState {
+  recentCalls: VoiceCall[];
+  memories: ConversationMemory[];
+  moodTrend: { date: string; score: number }[];
+  setRecentCalls: (calls: VoiceCall[]) => void;
+  setMemories: (memories: ConversationMemory[]) => void;
+  setMoodTrend: (trend: { date: string; score: number }[]) => void;
+}
+
+export const useVoiceStore = create<VoiceState>((set) => ({
+  recentCalls: [],
+  memories: [],
+  moodTrend: [],
+  setRecentCalls: (recentCalls) => set({ recentCalls }),
+  setMemories: (memories) => set({ memories }),
+  setMoodTrend: (moodTrend) => set({ moodTrend }),
 }));
 
 // ============ Mock Data Helpers ============

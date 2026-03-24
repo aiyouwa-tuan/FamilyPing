@@ -133,3 +133,29 @@ export interface DailyInsight {
   };
   weather_alert: string | null;
 }
+
+// ============ V3.0 AI Voice Call Types ============
+
+export interface VoiceCall {
+  id: string;
+  user_id: string;
+  started_at: string;
+  ended_at: string | null;
+  duration_seconds: number | null;
+  transcript: string | null;
+  summary: string | null;
+  mood_score: number | null;
+  key_topics: { topic: string; sentiment: string; context: string }[];
+  highlights: { timestamp: string; text: string; importance: string }[];
+}
+
+export interface ConversationMemory {
+  id: string;
+  user_id: string;
+  topic: string;
+  sentiment: string | null;
+  context: string;
+  mention_count: number;
+  first_mentioned_at: string;
+  last_mentioned_at: string;
+}

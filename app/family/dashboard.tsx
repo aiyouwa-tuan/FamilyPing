@@ -138,6 +138,39 @@ export default function FamilyDashboardScreen() {
           <Text style={styles.insightsTap}>View insights {'\u2192'}</Text>
         </TouchableOpacity>
 
+        {/* Voice Calls Card */}
+        <TouchableOpacity
+          style={styles.voiceCallCard}
+          onPress={() => router.push('/family/calls')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.voiceCallHeader}>
+            <Text style={styles.voiceCallEmoji}>{'\uD83D\uDCDE'}</Text>
+            <Text style={styles.voiceCallTitle}>Voice Calls</Text>
+            <View style={styles.voiceCallBadge}>
+              <Text style={styles.voiceCallBadgeText}>V3.0</Text>
+            </View>
+          </View>
+          {/* Show today's call summary or scheduled time */}
+          {true ? (
+            <View style={styles.voiceCallContent}>
+              <Text style={styles.voiceCallSummaryLabel}>
+                {'\uD83D\uDCDE'} Today's Call {'\uD83D\uDE0A'}
+              </Text>
+              <Text style={styles.voiceCallSnippet} numberOfLines={2}>
+                Mom sounded cheerful today. She talked about her morning walk and mentioned sleeping much better.
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.voiceCallContent}>
+              <Text style={styles.voiceCallScheduled}>
+                {'\uD83D\uDD52'} Scheduled for 2:00 PM
+              </Text>
+            </View>
+          )}
+          <Text style={styles.voiceCallTap}>View call insights {'\u2192'}</Text>
+        </TouchableOpacity>
+
         {/* Stats Row */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
@@ -595,5 +628,66 @@ const styles = StyleSheet.create({
   backText: {
     fontSize: fonts.small,
     color: colors.textLight,
+  },
+  voiceCallCard: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+  },
+  voiceCallHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  voiceCallEmoji: {
+    fontSize: 20,
+  },
+  voiceCallTitle: {
+    fontSize: fonts.subtitle,
+    fontWeight: '700',
+    color: colors.text,
+    flex: 1,
+  },
+  voiceCallBadge: {
+    backgroundColor: colors.primaryLight,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.sm,
+  },
+  voiceCallBadgeText: {
+    fontSize: fonts.tiny,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  voiceCallContent: {
+    marginBottom: spacing.sm,
+  },
+  voiceCallSummaryLabel: {
+    fontSize: fonts.small,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  voiceCallSnippet: {
+    fontSize: fonts.small,
+    color: colors.textSecondary,
+    lineHeight: 20,
+  },
+  voiceCallScheduled: {
+    fontSize: fonts.small,
+    color: colors.textSecondary,
+  },
+  voiceCallTap: {
+    fontSize: fonts.small,
+    color: colors.primary,
+    fontWeight: '600',
   },
 });
