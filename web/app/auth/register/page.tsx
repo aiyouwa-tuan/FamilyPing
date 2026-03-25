@@ -255,7 +255,6 @@ export default function RegisterPage() {
           >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
-          </form>
 
           <p className="text-center text-sm text-gray-600">
             Already have an account?{' '}
@@ -263,6 +262,7 @@ export default function RegisterPage() {
               Sign In
             </Link>
           </p>
+          </form>
         </div>
       </div>
     </div>
