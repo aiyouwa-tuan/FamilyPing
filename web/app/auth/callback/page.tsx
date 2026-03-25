@@ -1,67 +1,50 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { Suspense } from 'react'
 
-function CallbackHandler() {
+export default function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
-  const searchParams = useSearchParams()
   const supabase = createClient()
 
   useEffect(() => {
-    const handleCallback = async () => {
-      try {
-        // Check for error in URL params
-        const urlError = searchParams.get('error_description') || searchParams.get('error')
-        if (urlError) {
-          setError(urlError)
-          return
-        }
-
-        // Try to get the code from URL and exchange it
-        const code = searchParams.get('code')
-        if (code) {
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
-          if (exchangeError) {
-            console.error('Code exchange error:', exchangeError.message)
-            // Don't set error yet, try getSession below
-          }
-        }
-
-        // Check if we have a session (from code exchange or from URL hash tokens)
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session) {
-          // Force a hard navigation to ensure middleware picks up cookies
-          window.location.href = '/dashboard'
-          return
-        }
-
-        // Listen for auth state changes (handles hash fragment tokens)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          (event, session) => {
-            if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION')) {
-              subscription.unsubscribe()
-              window.location.href = '/dashboard'
-            }
-          }
-        )
-
-        // Timeout
-        setTimeout(() => {
-          subscription.unsubscribe()
-          setError('Login timed out. Please try again.')
-        }, 15000)
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Unknown error'
-        console.error('Callback error:', message)
-        setError(message)
-      }
+    // Check URL hash for error
+    const hash = window.location.hash
+    if (hash.includes('error=')) {
+      const params = new URLSearchParams(hash.substring(1))
+      setError(params.get('error_description') || params.get('error') || 'Login failed')
+      return
     }
 
-    handleCallback()
+    // With implicit flow, Supabase auto-detects tokens in the URL hash
+    // and creates a session. We just need to wait for it.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session) {
+          subscription.unsubscribe()
+          window.location.href = '/dashboard'
+        }
+      }
+    )
+
+    // Also check if session already exists
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        subscription.unsubscribe()
+        window.location.href = '/dashboard'
+      }
+    })
+
+    // Timeout after 10 seconds
+    const timeout = setTimeout(() => {
+      subscription.unsubscribe()
+      setError('Login timed out. Please try again.')
+    }, 10000)
+
+    return () => {
+      clearTimeout(timeout)
+      subscription.unsubscribe()
+    }
   }, [])
 
   if (error) {
@@ -86,17 +69,5 @@ function CallbackHandler() {
         <p className="text-gray-600 text-lg">Signing you in...</p>
       </div>
     </div>
-  )
-}
-
-export default function AuthCallbackPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#FFF8F0] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF6B35] mx-auto"></div>
-      </div>
-    }>
-      <CallbackHandler />
-    </Suspense>
   )
 }
