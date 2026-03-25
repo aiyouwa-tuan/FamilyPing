@@ -171,6 +171,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          <form onSubmit={handleRegister} className="space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Your Name
@@ -254,6 +255,7 @@ export default function RegisterPage() {
           >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
+          </form>
 
           <p className="text-center text-sm text-gray-600">
             Already have an account?{' '}
