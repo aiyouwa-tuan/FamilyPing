@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: 'FamilyPing',
   description: 'A daily check-in app for families to stay connected with aging parents.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/icons/icon-192.png',
+  },
   themeColor: '#FF6B35',
   appleWebApp: {
     capable: true,
