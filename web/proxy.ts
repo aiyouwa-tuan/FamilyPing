@@ -3,8 +3,8 @@ import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 export async function proxy(request: NextRequest) {
-  // Skip middleware for auth callback - let the route handler process it
-  if (request.nextUrl.pathname === '/auth/callback') {
+  // Skip middleware for auth callback - let the client-side page handle it
+  if (request.nextUrl.pathname.startsWith('/auth/callback')) {
     return NextResponse.next()
   }
 
