@@ -9,8 +9,21 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'FamilyPing - Know your parents are OK',
+  title: 'FamilyPing',
   description: 'A daily check-in app for families to stay connected with aging parents.',
+  manifest: '/manifest.json',
+  themeColor: '#FF6B35',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'FamilyPing',
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 }
 
 export default function RootLayout({
