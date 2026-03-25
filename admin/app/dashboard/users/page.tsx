@@ -12,6 +12,7 @@ interface User {
   family_id: string;
   created_at: string;
   last_active_at: string | null;
+  email: string | null;
   families: { name: string } | null;
   [key: string]: unknown;
 }
@@ -26,17 +27,27 @@ interface Checkin {
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userCheckins, setUserCheckins] = useState<Checkin[]>([]);
+  const [checkinsLoading, setCheckinsLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const loadUsers = useCallback(async () => {
-    const { data } = await supabaseAdmin
-      .from('users')
-      .select('*, families(name)')
-      .order('created_at', { ascending: false });
-    setUsers((data as unknown as User[]) ?? []);
-    setLoading(false);
+    try {
+      const { data, error: fetchErr } = await supabaseAdmin
+        .from('users')
+        .select('*, families(name)')
+        .order('created_at', { ascending: false });
+
+      if (fetchErr) throw fetchErr;
+      setUsers((data as unknown as User[]) ?? []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load users');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -44,28 +55,49 @@ export default function UsersPage() {
   }, [loadUsers]);
 
   const loadUserCheckins = async (userId: string) => {
-    const { data } = await supabaseAdmin
-      .from('checkins')
-      .select('id, mood, checked_in_at, question_answer')
-      .eq('user_id', userId)
-      .order('checked_in_at', { ascending: false })
-      .limit(20);
-    setUserCheckins((data ?? []) as Checkin[]);
+    setCheckinsLoading(true);
+    try {
+      const { data } = await supabaseAdmin
+        .from('checkins')
+        .select('id, mood, checked_in_at, question_answer')
+        .eq('user_id', userId)
+        .order('checked_in_at', { ascending: false })
+        .limit(30);
+      setUserCheckins((data ?? []) as Checkin[]);
+    } catch {
+      setUserCheckins([]);
+    } finally {
+      setCheckinsLoading(false);
+    }
   };
 
   const handleDeleteUser = async (userId: string) => {
-    await supabaseAdmin.from('checkins').delete().eq('user_id', userId);
-    await supabaseAdmin.from('users').delete().eq('id', userId);
-    setShowDeleteConfirm(null);
-    setSelectedUser(null);
-    loadUsers();
+    setDeleting(true);
+    try {
+      // Delete related checkins first, then the user
+      await supabaseAdmin.from('checkins').delete().eq('user_id', userId);
+      await supabaseAdmin.from('users').delete().eq('id', userId);
+      setShowDeleteConfirm(null);
+      setSelectedUser(null);
+      await loadUsers();
+    } catch (err) {
+      alert('Delete failed: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const moodEmoji: Record<string, string> = { great: '😊', ok: '😐', not_great: '😟' };
 
   const columns = [
     { key: 'name', label: 'Name' },
-    { key: 'phone', label: 'Phone' },
+    {
+      key: 'email',
+      label: 'Email',
+      render: (row: User) => (
+        <span className="text-gray-400 text-xs">{row.email || row.phone || '-'}</span>
+      ),
+    },
     {
       key: 'role',
       label: 'Role',
@@ -74,7 +106,9 @@ export default function UsersPage() {
           className={`px-2 py-0.5 rounded text-xs font-medium ${
             row.role === 'parent'
               ? 'bg-blue-900/50 text-blue-400'
-              : 'bg-purple-900/50 text-purple-400'
+              : row.role === 'child'
+              ? 'bg-purple-900/50 text-purple-400'
+              : 'bg-gray-700 text-gray-300'
           }`}
         >
           {row.role}
@@ -84,22 +118,47 @@ export default function UsersPage() {
     {
       key: 'family_name',
       label: 'Family',
-      render: (row: User) => row.families?.name ?? '-',
+      render: (row: User) => row.families?.name ?? <span className="text-gray-600">-</span>,
+    },
+    {
+      key: 'last_active_at',
+      label: 'Last Active',
+      render: (row: User) =>
+        row.last_active_at ? (
+          <span className="text-gray-300">{new Date(row.last_active_at).toLocaleString()}</span>
+        ) : (
+          <span className="text-gray-600">Never</span>
+        ),
     },
     {
       key: 'created_at',
       label: 'Created',
       render: (row: User) => new Date(row.created_at).toLocaleDateString(),
     },
-    {
-      key: 'last_active_at',
-      label: 'Last Active',
-      render: (row: User) =>
-        row.last_active_at ? new Date(row.last_active_at).toLocaleString() : 'Never',
-    },
   ];
 
-  if (loading) return <div className="text-gray-500">Loading users...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500 flex items-center gap-3">
+          <svg className="animate-spin h-5 w-5 text-indigo-500" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          Loading users...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-900/30 border border-red-800 rounded-xl p-6">
+        <h3 className="text-red-400 font-medium">Error loading users</h3>
+        <p className="text-red-400/70 text-sm mt-1">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -111,9 +170,10 @@ export default function UsersPage() {
       <DataTable
         columns={columns}
         data={users}
-        searchKeys={['name', 'phone', 'role']}
+        searchKeys={['name', 'phone', 'role', 'email']}
         onRowClick={(user) => {
           setSelectedUser(user);
+          setShowDeleteConfirm(null);
           loadUserCheckins(user.id);
         }}
       />
@@ -126,12 +186,12 @@ export default function UsersPage() {
               <div>
                 <h3 className="text-lg font-semibold text-white">{selectedUser.name}</h3>
                 <p className="text-sm text-gray-400">
-                  {selectedUser.role} &middot; {selectedUser.phone}
+                  {selectedUser.role} &middot; {selectedUser.email || selectedUser.phone}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedUser(null)}
-                className="text-gray-400 hover:text-white text-xl"
+                className="text-gray-400 hover:text-white text-xl leading-none"
               >
                 &times;
               </button>
@@ -144,14 +204,14 @@ export default function UsersPage() {
                   <span className="text-white">{selectedUser.families?.name ?? '-'}</span>
                 </div>
                 <div>
+                  <span className="text-gray-500">Phone:</span>{' '}
+                  <span className="text-white">{selectedUser.phone || '-'}</span>
+                </div>
+                <div>
                   <span className="text-gray-500">Created:</span>{' '}
                   <span className="text-white">
                     {new Date(selectedUser.created_at).toLocaleDateString()}
                   </span>
-                </div>
-                <div>
-                  <span className="text-gray-500">ID:</span>{' '}
-                  <span className="text-white font-mono text-xs">{selectedUser.id}</span>
                 </div>
                 <div>
                   <span className="text-gray-500">Last Active:</span>{' '}
@@ -161,14 +221,20 @@ export default function UsersPage() {
                       : 'Never'}
                   </span>
                 </div>
+                <div className="col-span-2">
+                  <span className="text-gray-500">ID:</span>{' '}
+                  <span className="text-white font-mono text-xs">{selectedUser.id}</span>
+                </div>
               </div>
 
               <div>
                 <h4 className="text-sm font-medium text-gray-400 mb-2">
-                  Recent Check-ins ({userCheckins.length})
+                  Recent Check-ins (last 30)
                 </h4>
-                {userCheckins.length === 0 ? (
-                  <p className="text-gray-600 text-sm">No check-ins</p>
+                {checkinsLoading ? (
+                  <p className="text-gray-600 text-sm">Loading check-ins...</p>
+                ) : userCheckins.length === 0 ? (
+                  <p className="text-gray-600 text-sm">No check-ins found</p>
                 ) : (
                   <div className="space-y-2 max-h-60 overflow-auto">
                     {userCheckins.map((c) => (
@@ -179,6 +245,11 @@ export default function UsersPage() {
                         <div className="flex items-center gap-2">
                           <span>{moodEmoji[c.mood] ?? '?'}</span>
                           <span className="text-gray-300 capitalize">{c.mood.replace('_', ' ')}</span>
+                          {c.question_answer && (
+                            <span className="text-gray-500 text-xs truncate max-w-[200px]">
+                              &mdash; {c.question_answer}
+                            </span>
+                          )}
                         </div>
                         <div className="text-gray-500 text-xs">
                           {new Date(c.checked_in_at).toLocaleString()}
@@ -192,12 +263,13 @@ export default function UsersPage() {
               <div className="pt-4 border-t border-gray-800 flex justify-end">
                 {showDeleteConfirm === selectedUser.id ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-red-400 text-sm">Are you sure?</span>
+                    <span className="text-red-400 text-sm">This will delete all user data. Are you sure?</span>
                     <button
                       onClick={() => handleDeleteUser(selectedUser.id)}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg"
+                      disabled={deleting}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-sm rounded-lg"
                     >
-                      Confirm Delete
+                      {deleting ? 'Deleting...' : 'Confirm Delete'}
                     </button>
                     <button
                       onClick={() => setShowDeleteConfirm(null)}
