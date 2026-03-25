@@ -14,7 +14,7 @@ export interface User {
   auth_id: string
   family_id: string
   name: string
-  role: 'parent' | 'family_member'
+  role: 'parent' | 'family'
   email: string
   phone?: string
   avatar_emoji?: string

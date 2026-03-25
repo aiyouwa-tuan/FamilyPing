@@ -224,7 +224,7 @@ export default function DashboardPage() {
         .insert({
           family_id: family.id,
           auth_id: authUser.id,
-          role: userRole === 'parent' ? 'parent' : 'family_member',
+          role: userRole === 'parent' ? 'parent' : 'family',
           name: userName.trim(),
           email: authUser.email || '',
           phone: authUser.phone || '',
@@ -256,7 +256,7 @@ export default function DashboardPage() {
         auth_id: authUser.id,
         family_id: family.id,
         name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User',
-        role: 'family_member',
+        role: 'family',
         email: authUser.email || '',
       })
       fetchData()

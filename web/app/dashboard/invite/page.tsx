@@ -134,7 +134,7 @@ export default function InvitePage() {
                     </div>
                   </div>
                   <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-500 capitalize">
-                    {member.role === 'family_member' ? 'Family' : 'Parent'}
+                    {member.role === 'family' ? 'Family' : 'Parent'}
                   </span>
                 </div>
               ))}

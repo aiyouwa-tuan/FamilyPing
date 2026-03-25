@@ -9,7 +9,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
-  const [role, setRole] = useState<'parent' | 'family_member'>('family_member')
+  const [role, setRole] = useState<'parent' | 'family'>('family')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -236,9 +236,9 @@ export default function RegisterPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setRole('family_member')}
+                onClick={() => setRole('family')}
                 className={`px-4 py-3 rounded-lg border-2 text-sm font-medium transition-colors ${
-                  role === 'family_member'
+                  role === 'family'
                     ? 'border-[#FF6B35] bg-[#FF6B35]/10 text-[#FF6B35]'
                     : 'border-gray-200 text-gray-600 hover:border-gray-300'
                 }`}
