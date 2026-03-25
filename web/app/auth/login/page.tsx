@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
@@ -13,6 +13,21 @@ export default function LoginPage() {
   const [oauthLoading, setOauthLoading] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  // Auto-detect session on mount (handles PWA OAuth return)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        window.location.href = '/dashboard'
+      }
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && event === 'SIGNED_IN') {
+        window.location.href = '/dashboard'
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
