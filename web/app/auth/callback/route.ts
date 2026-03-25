@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/dashboard'
+  const redirectTo = searchParams.get('redirect_to') ?? next
+
+  // Use the deployed URL, not request origin (which may differ)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://web-six-gold-l0wwtqu6sp.vercel.app'
 
   if (code) {
-    const response = NextResponse.redirect(`${origin}${next}`)
+    const response = NextResponse.redirect(`${siteUrl}${redirectTo}`)
 
     const supabase = createServerClient(
       'https://uokqhrbiwqcyuszltsxk.supabase.co',
@@ -19,7 +23,13 @@ export async function GET(request: NextRequest) {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value, options }) => {
-              response.cookies.set(name, value, options)
+              response.cookies.set(name, value, {
+                ...options,
+                // Ensure cookies work across the site
+                path: '/',
+                sameSite: 'lax',
+                secure: true,
+              })
             })
           },
         },
@@ -30,7 +40,8 @@ export async function GET(request: NextRequest) {
     if (!error) {
       return response
     }
+    console.error('Auth callback error:', error.message)
   }
 
-  return NextResponse.redirect(`${origin}/auth/login?error=auth_callback_error`)
+  return NextResponse.redirect(`${siteUrl}/auth/login?error=auth_callback_error`)
 }
