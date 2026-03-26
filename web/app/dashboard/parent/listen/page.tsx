@@ -6,7 +6,6 @@ import { synthesizeSpeech, getVoiceProfiles } from '@/lib/voice-engine'
 import type { VoiceProfile } from '@/lib/voice-engine-types'
 import type { User } from '@/lib/types'
 import Link from 'next/link'
-import AudioPlayer from '@/components/AudioPlayer'
 import {
   fetchLibriVoxBooks,
   fetchRadioStations,
@@ -144,10 +143,38 @@ export default function ListenPage() {
   const [playingId, setPlayingId] = useState<string | null>(null)
   const [playingUrl, setPlayingUrl] = useState<string | null>(null)
   const [playingTitle, setPlayingTitle] = useState<string | null>(null)
+  const [isPaused, setIsPaused] = useState(false)
   const [isSynthesizing, setIsSynthesizing] = useState(false)
   const [synthError, setSynthError] = useState<string | null>(null)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  // Sync audioRef with playingUrl so parent can control play/pause
+  useEffect(() => {
+    if (!playingUrl) {
+      audioRef.current = null
+      return
+    }
+    const audio = new Audio(playingUrl)
+    audioRef.current = audio
+    audio.play().catch(() => {})
+    audio.addEventListener('ended', () => {
+      setPlayingId(null)
+      setPlayingUrl(null)
+      setPlayingTitle(null)
+      setIsPaused(false)
+    })
+    audio.addEventListener('pause', () => {
+      setIsPaused(true)
+    })
+    audio.addEventListener('play', () => {
+      setIsPaused(false)
+    })
+    return () => {
+      audio.pause()
+      audio.src = ''
+    }
+  }, [playingUrl])
 
   // Fetch user & voice profiles
   useEffect(() => {
@@ -261,8 +288,20 @@ export default function ListenPage() {
       if (audioRef.current) {
         if (audioRef.current.paused) {
           audioRef.current.play()
+          setIsPaused(false)
         } else {
           audioRef.current.pause()
+          setIsPaused(true)
+        }
+      }
+      // Also handle browser speech synthesis pause/resume
+      if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume()
+          setIsPaused(false)
+        } else {
+          window.speechSynthesis.pause()
+          setIsPaused(true)
         }
       }
       return
@@ -273,9 +312,13 @@ export default function ListenPage() {
       audioRef.current.pause()
       audioRef.current.src = ''
     }
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel()
+    }
 
     setPlayingId(item.id)
     setPlayingTitle(item.title)
+    setIsPaused(false)
 
     if (item.type === 'audio' || item.type === 'stream') {
       // Direct audio URL
@@ -314,6 +357,20 @@ export default function ListenPage() {
     setPlayingId(null)
     setPlayingUrl(null)
     setPlayingTitle(null)
+    setIsPaused(false)
+  }, [])
+
+  // Toggle play/pause from the Now Playing bar
+  const handleNowPlayingToggle = useCallback(() => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play()
+        setIsPaused(false)
+      } else {
+        audioRef.current.pause()
+        setIsPaused(true)
+      }
+    }
   }, [])
 
   const filteredContent = allContent.filter(item => item.category === activeCategory)
@@ -430,7 +487,7 @@ export default function ListenPage() {
                     </p>
                   </div>
 
-                  {/* Play button */}
+                  {/* Play/Pause button */}
                   <button
                     onClick={() => handlePlay(item)}
                     disabled={isSynthesizing && playingId !== item.id}
@@ -442,7 +499,7 @@ export default function ListenPage() {
                   >
                     {isSynthesizing && playingId === item.id ? (
                       <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent" />
-                    ) : playingId === item.id ? (
+                    ) : playingId === item.id && !isPaused ? (
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
                         <rect x="6" y="4" width="4" height="16" rx="1" />
                         <rect x="14" y="4" width="4" height="16" rx="1" />
@@ -480,20 +537,61 @@ export default function ListenPage() {
       </div>
 
       {/* Now Playing Bar */}
-      {playingId && playingUrl && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-[#FF6B35] shadow-lg z-50">
-          <div className="max-w-lg mx-auto px-5 py-4">
-            <AudioPlayer
-              audioUrl={playingUrl}
-              title={playingTitle || undefined}
-              onComplete={handleStop}
-            />
-            <button
-              onClick={handleStop}
-              className="w-full mt-3 py-3 rounded-2xl bg-gray-100 text-[18px] font-bold text-gray-600 hover:bg-gray-200 transition-colors min-h-[48px]"
-            >
-              Stop
-            </button>
+      {playingId && (
+        <div className="fixed bottom-20 left-0 right-0 bg-white border-t-2 border-[#FF6B35] shadow-lg z-50">
+          <div className="max-w-lg mx-auto px-5 py-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#FF6B35] flex items-center justify-center flex-shrink-0">
+                {isPaused ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <polygon points="6,3 20,12 6,21" />
+                  </svg>
+                ) : (
+                  <div className="flex gap-[3px]">
+                    <div className="w-[3px] h-[14px] bg-white rounded-sm animate-pulse" />
+                    <div className="w-[3px] h-[14px] bg-white rounded-sm animate-pulse" style={{ animationDelay: '0.2s' }} />
+                    <div className="w-[3px] h-[14px] bg-white rounded-sm animate-pulse" style={{ animationDelay: '0.4s' }} />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[16px] font-semibold text-gray-800 truncate">{playingTitle}</p>
+                <p className="text-[13px] text-gray-400">
+                  {isSynthesizing ? 'Generating audio...' : isPaused ? 'Paused' : 'Now Playing'}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-3">
+              {playingUrl && (
+                <button
+                  onClick={handleNowPlayingToggle}
+                  className="flex-1 py-3 rounded-2xl bg-[#FF6B35] text-[18px] font-bold text-white hover:bg-[#e55a2b] transition-colors min-h-[48px] flex items-center justify-center gap-2"
+                >
+                  {isPaused ? (
+                    <>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                        <polygon points="6,3 20,12 6,21" />
+                      </svg>
+                      Resume
+                    </>
+                  ) : (
+                    <>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                        <rect x="6" y="4" width="4" height="16" rx="1" />
+                        <rect x="14" y="4" width="4" height="16" rx="1" />
+                      </svg>
+                      Pause
+                    </>
+                  )}
+                </button>
+              )}
+              <button
+                onClick={handleStop}
+                className={`${playingUrl ? '' : 'flex-1'} py-3 px-6 rounded-2xl bg-gray-100 text-[18px] font-bold text-gray-600 hover:bg-gray-200 transition-colors min-h-[48px]`}
+              >
+                Stop
+              </button>
+            </div>
           </div>
         </div>
       )}

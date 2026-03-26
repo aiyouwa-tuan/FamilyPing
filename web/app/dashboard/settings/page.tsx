@@ -206,15 +206,18 @@ export default function SettingsPage() {
               { key: 'sos_notifications' as const, label: 'SOS notifications' },
               { key: 'weekly_summary' as const, label: 'Weekly summary emails' },
             ].map(({ key, label }) => (
-              <label key={key} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0 cursor-pointer">
+              <div key={key} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                 <span className="text-sm text-gray-600">{label}</span>
-                <button
-                  onClick={() => toggleNotification(key)}
-                  className={`relative w-10 h-5 rounded-full transition-colors ${notifications[key] ? 'bg-[#FF6B35]' : 'bg-gray-300'}`}
-                >
-                  <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${notifications[key] ? 'translate-x-5' : 'translate-x-0.5'}`} />
-                </button>
-              </label>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={notifications[key]}
+                    onChange={() => toggleNotification(key)}
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF6B35]"></div>
+                </label>
+              </div>
             ))}
           </div>
         </div>

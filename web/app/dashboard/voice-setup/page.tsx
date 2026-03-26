@@ -435,14 +435,57 @@ export default function VoiceSetupPage() {
               </div>
 
               {/* Timer */}
-              <div className="text-center mb-5">
-                <p className="text-[36px] font-mono font-bold text-gray-900">
+              <div className="text-center mb-3">
+                <p className="text-[48px] font-mono font-bold text-gray-900">
                   {Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}
                 </p>
-                <p className="text-[14px] text-gray-500">
-                  {isRecording ? 'Recording... (aim for ~60 seconds)' : 'Press to start recording'}
+                <p className="text-[14px] text-gray-500 mb-1">
+                  {isRecording ? 'Recording...' : 'Press to start recording'}
+                </p>
+                <p className="text-[13px] text-gray-400">
+                  Record at least 30 seconds for best results (60 seconds recommended)
                 </p>
               </div>
+
+              {/* Duration progress bar */}
+              {isRecording && (
+                <div className="mb-4 space-y-2">
+                  <div className="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{
+                        width: `${Math.min((recordingTime / 60) * 100, 100)}%`,
+                        backgroundColor: recordingTime < 10 ? '#EF4444' : recordingTime < 30 ? '#F59E0B' : '#22C55E',
+                      }}
+                    />
+                    {/* 30s marker */}
+                    <div className="absolute top-0 h-full w-[2px] bg-gray-400" style={{ left: '50%' }} />
+                  </div>
+                  <div className="flex justify-between text-[11px] text-gray-400">
+                    <span>0s</span>
+                    <span>30s (min)</span>
+                    <span>60s</span>
+                  </div>
+                  {/* Quality feedback */}
+                  <p className={`text-[14px] font-medium text-center ${
+                    recordingTime < 10
+                      ? 'text-red-500'
+                      : recordingTime < 30
+                        ? 'text-yellow-600'
+                        : recordingTime < 60
+                          ? 'text-green-600'
+                          : 'text-green-600'
+                  }`}>
+                    {recordingTime < 10
+                      ? 'Too short \u2014 voice clone quality will be poor'
+                      : recordingTime < 30
+                        ? 'Acceptable \u2014 keep recording for better quality'
+                        : recordingTime < 60
+                          ? 'Good quality'
+                          : 'Excellent! You can stop now'}
+                  </p>
+                </div>
+              )}
 
               {/* Record button */}
               <div className="flex justify-center">
@@ -484,6 +527,21 @@ export default function VoiceSetupPage() {
               className="w-full"
             />
 
+            {recordingTime < 10 && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-3">
+                <p className="text-[14px] text-red-600 text-center">
+                  Recording too short ({recordingTime}s). Record at least 10 seconds to use this clip.
+                </p>
+              </div>
+            )}
+            {recordingTime >= 10 && recordingTime < 30 && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-3">
+                <p className="text-[14px] text-yellow-700 text-center">
+                  Acceptable quality. For better results, try recording 30+ seconds.
+                </p>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={handleRecordAgain}
@@ -493,7 +551,8 @@ export default function VoiceSetupPage() {
               </button>
               <button
                 onClick={handleUseRecording}
-                className="py-4 rounded-2xl font-bold text-[16px] bg-[#FF6B35] text-white hover:bg-[#e55a2b] transition-colors min-h-[56px] active:scale-[0.98]"
+                disabled={recordingTime < 10}
+                className="py-4 rounded-2xl font-bold text-[16px] bg-[#FF6B35] text-white hover:bg-[#e55a2b] transition-colors min-h-[56px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Use This
               </button>

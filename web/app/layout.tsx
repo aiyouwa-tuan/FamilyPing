@@ -37,7 +37,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="min-h-full flex flex-col bg-[#FFF8F0] font-system">
+      <body className="min-h-full flex flex-col font-system" style={{ background: 'linear-gradient(180deg, #FFF5EE 0%, #FFE8D6 100%)' }}>
         <div className="safe-area-top" />
         <main className="flex-1 pb-[80px]">{children}</main>
         <BottomTabBar />
