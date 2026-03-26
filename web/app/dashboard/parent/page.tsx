@@ -13,6 +13,13 @@ interface WeatherData {
   icon: string
 }
 
+interface VoiceProfile {
+  id: string
+  voice_name: string
+  status: string
+  provider_voice_id: string | null
+}
+
 const WEATHER_ICONS: Record<string, string> = {
   '01d': '\u2600\uFE0F', '01n': '\uD83C\uDF19',
   '02d': '\u26C5', '02n': '\uD83C\uDF19',
@@ -37,7 +44,11 @@ export default function ParentDashboard() {
   const [sosActive, setSosActive] = useState(false)
   const [sosHolding, setSosHolding] = useState(false)
   const [sosProgress, setSosProgress] = useState(0)
+  const [voiceProfile, setVoiceProfile] = useState<VoiceProfile | null>(null)
+  const [greetingAudioUrl, setGreetingAudioUrl] = useState<string | null>(null)
+  const [playingGreeting, setPlayingGreeting] = useState(false)
   const [loading, setLoading] = useState(true)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const sosTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const sosStartRef = useRef<number>(0)
   const router = useRouter()
@@ -123,6 +134,28 @@ export default function ParentDashboard() {
       .single()
 
     if (msgData) setLatestMessage(msgData)
+
+    // Get voice profile for this family
+    const { data: vpData } = await supabase
+      .from('voice_profiles')
+      .select('id, voice_name, status, provider_voice_id')
+      .eq('family_id', userData.family_id)
+      .eq('is_primary', true)
+      .eq('status', 'ready')
+      .limit(1)
+      .single()
+
+    if (vpData) {
+      setVoiceProfile(vpData)
+      // Check for pre-generated morning greeting
+      const todayDate = new Date().toISOString().split('T')[0]
+      const { data: greetingUrl } = supabase.storage
+        .from('audio')
+        .getPublicUrl(`tts-cache/${userData.family_id}/${todayDate}/morning-greeting.mp3`)
+      if (greetingUrl?.publicUrl) {
+        setGreetingAudioUrl(greetingUrl.publicUrl)
+      }
+    }
 
     setLoading(false)
   }, [supabase, router])
@@ -215,6 +248,22 @@ export default function ParentDashboard() {
     })
   }
 
+  function handlePlayGreeting() {
+    if (!greetingAudioUrl) return
+    if (playingGreeting && audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+      setPlayingGreeting(false)
+      return
+    }
+    const audio = new Audio(greetingAudioUrl)
+    audioRef.current = audio
+    audio.onended = () => setPlayingGreeting(false)
+    audio.onerror = () => setPlayingGreeting(false)
+    audio.play()
+    setPlayingGreeting(true)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FFF8F0] flex items-center justify-center">
@@ -242,9 +291,24 @@ export default function ParentDashboard() {
 
         {/* Greeting + Date */}
         <div className="text-center">
-          <h1 className="text-[32px] font-bold text-gray-900 leading-tight">
-            Good {getTimeOfDay()}, {currentUser.name}
-          </h1>
+          <div className="flex items-center justify-center gap-3">
+            <h1 className="text-[32px] font-bold text-gray-900 leading-tight">
+              Good {getTimeOfDay()}, {currentUser.name}
+            </h1>
+            {greetingAudioUrl && (
+              <button
+                onClick={handlePlayGreeting}
+                className={`text-[28px] p-2 rounded-full transition-all ${
+                  playingGreeting
+                    ? 'bg-[#FF6B35] text-white animate-pulse'
+                    : 'bg-orange-100 text-[#FF6B35] hover:bg-orange-200'
+                }`}
+                aria-label={playingGreeting ? 'Stop greeting' : 'Play greeting'}
+              >
+                {playingGreeting ? '\uD83D\uDD0A' : '\uD83D\uDD0A'}
+              </button>
+            )}
+          </div>
           <p className="text-[22px] text-gray-500 mt-2">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </p>
@@ -264,6 +328,31 @@ export default function ParentDashboard() {
             </div>
             <div className="text-[72px] leading-none">{weatherEmoji}</div>
           </div>
+        </div>
+
+        {/* Listen Section */}
+        <div className="bg-white rounded-3xl p-7 shadow-sm border border-orange-100">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[24px]">{'\uD83C\uDFA7'}</span>
+            <h3 className="text-[22px] font-semibold text-gray-900">Listen</h3>
+          </div>
+          <p className="text-[20px] text-gray-600 mb-5 leading-relaxed">
+            {voiceProfile
+              ? `Hear stories in ${voiceProfile.voice_name}'s voice`
+              : 'Ask your family to set up a voice for you'}
+          </p>
+          <Link
+            href="/dashboard/parent/listen"
+            className="block w-full bg-[#FF6B35] text-white py-4 rounded-2xl font-bold text-[22px] text-center hover:bg-[#e55a2b] transition-colors min-h-[64px] active:scale-[0.98]"
+          >
+            {'\u25B6'} Play Something
+          </Link>
+          <Link
+            href="/dashboard/parent/read-aloud"
+            className="block text-center mt-4 text-[18px] text-[#FF6B35] font-medium hover:underline"
+          >
+            {'\uD83D\uDCD6'} Read Aloud
+          </Link>
         </div>
 
         {/* Latest Message from Family */}

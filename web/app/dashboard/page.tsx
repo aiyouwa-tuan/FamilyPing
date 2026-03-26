@@ -23,6 +23,7 @@ export default function DashboardPage() {
   const [avgCheckinTime, setAvgCheckinTime] = useState<string | null>(null)
   const [monthTotal, setMonthTotal] = useState(0)
   const [todayAnswer, setTodayAnswer] = useState<{ question: string; answer: string } | null>(null)
+  const [voiceProfiles, setVoiceProfiles] = useState<{ id: string; voice_name: string; status: string }[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [sendingMsg, setSendingMsg] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -179,6 +180,15 @@ export default function DashboardPage() {
       .limit(5)
 
     if (msgData) setMessages(msgData)
+
+    // Get voice profiles for this family
+    const { data: vpData } = await supabase
+      .from('voice_profiles')
+      .select('id, voice_name, status')
+      .eq('family_id', userData.family_id)
+      .order('created_at', { ascending: false })
+
+    if (vpData) setVoiceProfiles(vpData)
 
     setLoading(false)
   }, [supabase, router])
@@ -516,6 +526,45 @@ export default function DashboardPage() {
             <div className="text-2xl mb-2">{'\u{1F4D6}'}</div>
             <p className="text-sm font-semibold text-gray-900">Memory Book</p>
             <p className="text-xs text-gray-400 mt-1">Daily stories</p>
+          </Link>
+        </div>
+
+        {/* Voice Cloning Setup */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">{'\uD83C\uDFA4'}</span>
+              <h3 className="text-lg font-semibold text-gray-900">Voice Cloning</h3>
+            </div>
+            <span className="text-xs text-gray-400">
+              {voiceProfiles.length} voice{voiceProfiles.length !== 1 ? 's' : ''} created
+            </span>
+          </div>
+          {voiceProfiles.length > 0 ? (
+            <div className="space-y-2 mb-4">
+              {voiceProfiles.map((vp) => (
+                <div key={vp.id} className="flex items-center justify-between bg-[#FFF8F0] rounded-xl px-4 py-3">
+                  <span className="text-sm font-medium text-gray-900">{vp.voice_name}</span>
+                  <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                    vp.status === 'ready'
+                      ? 'bg-green-100 text-green-700'
+                      : vp.status === 'processing'
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}>
+                    {vp.status === 'ready' ? 'Ready' : vp.status === 'processing' ? 'Processing...' : 'Failed'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 mb-4">No voices set up yet. Clone a voice so your parent can hear stories in a familiar voice.</p>
+          )}
+          <Link
+            href="/dashboard/voice-setup"
+            className="block w-full bg-[#4ECDC4] text-white py-3 rounded-xl text-center font-semibold text-sm hover:bg-[#3dbdb5] transition-colors"
+          >
+            {voiceProfiles.length > 0 ? 'Manage Voices' : 'Set up a voice'}
           </Link>
         </div>
 
