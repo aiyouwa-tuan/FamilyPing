@@ -129,7 +129,7 @@ export default function ChatAIPage() {
             }`}>
               {msg.content}
               <p className={`text-[10px] mt-1 ${msg.role === 'user' ? 'text-white/60' : 'text-gray-400'}`}>
-                {msg.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                {msg.timestamp.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
               </p>
             </div>
           </div>

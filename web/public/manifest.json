@@ -1,7 +1,7 @@
 {
   "name": "FamilyPing",
   "short_name": "FamilyPing",
-  "description": "Know your parents are OK. Every day.",
+  "description": "Stay connected with your family",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#FFF8F0",

@@ -7,9 +7,21 @@ import { createClient } from '@/lib/supabase'
 import type { User, Message, Checkin, Mood } from '@/lib/types'
 
 const moodEmojis: Record<Mood, string> = {
-  great: '\u{1F60A}',
-  ok: '\u{1F642}',
-  not_great: '\u{1F614}',
+  great: '\uD83D\uDE0A',
+  ok: '\uD83D\uDE42',
+  not_great: '\uD83D\uDE14',
+}
+
+const moodLabels: Record<Mood, string> = {
+  great: 'Feeling Great',
+  ok: 'Doing OK',
+  not_great: 'Not Great',
+}
+
+const moodColors: Record<Mood, string> = {
+  great: '#34C759',
+  ok: '#FF9F0A',
+  not_great: '#FF453A',
 }
 
 export default function DashboardPage() {
@@ -140,13 +152,14 @@ export default function DashboardPage() {
       }
     }
 
-    // Mood distribution & stats (last 30 days)
+    // Mood distribution & stats (last 30 days) — use parent's checkins
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    const statsUserId = parentData?.id || userData.id
     const { data: checkinData } = await supabase
       .from('checkins')
       .select('mood, created_at')
-      .eq('family_id', userData.family_id)
+      .eq('user_id', statsUserId)
       .gte('created_at', thirtyDaysAgo.toISOString())
 
     if (checkinData) {
@@ -279,7 +292,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FFF8F0] flex items-center justify-center">
-        <div className="animate-pulse text-gray-400">Loading your dashboard...</div>
+        <div className="animate-pulse text-gray-400 text-[16px]">Loading your dashboard...</div>
       </div>
     )
   }
@@ -287,27 +300,27 @@ export default function DashboardPage() {
   // No family yet - show join/create flow
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-[#FFF8F0] py-12">
-        <div className="max-w-md mx-auto px-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">Welcome to FamilyPing</h1>
-          <div className="bg-white rounded-2xl shadow-sm p-6 mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Create a New Family</h2>
+      <div className="min-h-screen bg-[#FFF8F0] px-5 pt-8 pb-[100px]">
+        <div className="max-w-[500px] mx-auto">
+          <h1 className="text-[28px] font-bold text-gray-900 mb-6 text-center">Welcome to FamilyPing</h1>
+          <div className="mobile-card mb-4">
+            <h2 className="text-[18px] font-semibold text-gray-900 mb-4">Create a New Family</h2>
             <form onSubmit={handleCreateFamily} className="space-y-3">
-              <input type="text" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Your name" className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-gray-900" />
-              <input type="text" value={familyName} onChange={(e) => setFamilyName(e.target.value)} placeholder="Family name (e.g. Robinson Family)" className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-gray-900" />
+              <input type="text" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Your name" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-gray-900" />
+              <input type="text" value={familyName} onChange={(e) => setFamilyName(e.target.value)} placeholder="Family name (e.g. Robinson Family)" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-gray-900" />
               <div className="flex gap-2">
-                <button type="button" onClick={() => setUserRole('family')} className={`flex-1 py-2 rounded-lg font-semibold border-2 transition-colors ${userRole === 'family' ? 'border-[#FF6B35] bg-[#FFF0E8] text-[#FF6B35]' : 'border-gray-200 text-gray-500'}`}>Family Member</button>
-                <button type="button" onClick={() => setUserRole('parent')} className={`flex-1 py-2 rounded-lg font-semibold border-2 transition-colors ${userRole === 'parent' ? 'border-[#4ECDC4] bg-[#E8FAF8] text-[#4ECDC4]' : 'border-gray-200 text-gray-500'}`}>Parent</button>
+                <button type="button" onClick={() => setUserRole('family')} className={`flex-1 py-3 rounded-xl font-semibold border-2 transition-colors text-[16px] ${userRole === 'family' ? 'border-[#FF6B35] bg-[#FFF0E8] text-[#FF6B35]' : 'border-gray-200 text-gray-500'}`}>Family Member</button>
+                <button type="button" onClick={() => setUserRole('parent')} className={`flex-1 py-3 rounded-xl font-semibold border-2 transition-colors text-[16px] ${userRole === 'parent' ? 'border-[#4ECDC4] bg-[#E8FAF8] text-[#4ECDC4]' : 'border-gray-200 text-gray-500'}`}>Parent</button>
               </div>
-              <button type="submit" disabled={creatingFamily} className="w-full bg-[#FF6B35] text-white py-3 rounded-lg font-semibold hover:bg-[#e55a2b] transition-colors disabled:opacity-50">{creatingFamily ? 'Creating...' : 'Create Family'}</button>
+              <button type="submit" disabled={creatingFamily} className="touch-button bg-[#FF6B35] text-white disabled:opacity-50">{creatingFamily ? 'Creating...' : 'Create Family'}</button>
             </form>
           </div>
-          <div className="text-center text-gray-400 text-sm mb-4">-- or --</div>
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Join an Existing Family</h2>
+          <div className="text-center text-gray-400 text-[14px] mb-4">-- or --</div>
+          <div className="mobile-card">
+            <h2 className="text-[18px] font-semibold text-gray-900 mb-4">Join an Existing Family</h2>
             <form onSubmit={handleJoinFamily} className="space-y-4">
-              <input type="text" value={joinCode} onChange={(e) => setJoinCode(e.target.value)} placeholder="Enter invite code (e.g. ABC123)" className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-gray-900 uppercase" />
-              <button type="submit" disabled={joiningFamily} className="w-full bg-[#4ECDC4] text-white py-3 rounded-lg font-semibold hover:bg-[#3dbdb5] transition-colors disabled:opacity-50">{joiningFamily ? 'Joining...' : 'Join Family'}</button>
+              <input type="text" value={joinCode} onChange={(e) => setJoinCode(e.target.value)} placeholder="Enter invite code (e.g. ABC123)" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-gray-900 uppercase" />
+              <button type="submit" disabled={joiningFamily} className="touch-button bg-[#4ECDC4] text-white disabled:opacity-50">{joiningFamily ? 'Joining...' : 'Join Family'}</button>
             </form>
           </div>
         </div>
@@ -341,97 +354,143 @@ export default function DashboardPage() {
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
   return (
-    <div className="min-h-screen bg-[#FFF8F0] py-8 pb-24">
-      <div className="max-w-2xl mx-auto px-4 space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500">Welcome back, {currentUser.name}</p>
-        </div>
+    <div className="min-h-screen bg-[#FFF8F0] px-5 pt-6 pb-24">
+      <div className="max-w-[500px] mx-auto space-y-5">
 
-        {/* Parent Status Card */}
+        {/* Status Card - Large emoji + mood at top */}
         {parentUser ? (
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">{parentUser.name}</h2>
-                <p className="text-sm text-gray-500">Parent</p>
+          <div className="mobile-card">
+            <div className="flex items-center gap-4">
+              <div className="status-card-emoji">
+                {mood ? moodEmojis[mood] : '\uD83D\uDE34'}
               </div>
-              {mood && <span className="text-4xl">{moodEmojis[mood]}</span>}
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-[#FFF8F0] rounded-xl p-3">
-                <p className="text-xs text-gray-500">Last Check-in</p>
-                <p className="text-sm font-semibold text-gray-900">
-                  {lastCheckin ? new Date(lastCheckin.created_at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'No check-ins yet'}
-                </p>
-              </div>
-              <div className="bg-[#FFF8F0] rounded-xl p-3">
-                <p className="text-xs text-gray-500">Streak</p>
-                <p className="text-sm font-semibold text-[#FF6B35]">{streak} day{streak !== 1 ? 's' : ''} {streak >= 7 ? '\u{1F525}' : ''}</p>
+              <div className="flex-1">
+                <h1 className="text-[22px] font-bold text-gray-900">{parentUser.name}</h1>
+                {mood ? (
+                  <p className="text-[16px] font-medium" style={{ color: moodColors[mood] }}>
+                    {moodLabels[mood]}
+                  </p>
+                ) : (
+                  <p className="text-[16px] text-gray-400">No check-in today</p>
+                )}
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-[13px] text-gray-500">
+                    {lastCheckin ? new Date(lastCheckin.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'No check-ins yet'}
+                  </span>
+                  {streak > 0 && (
+                    <span className="text-[13px] font-semibold text-[#FF6B35]">
+                      {streak} day streak {streak >= 7 ? '\uD83D\uDD25' : ''}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
-            <p className="text-gray-500 text-sm">No parent in this family yet. Invite a parent to get started.</p>
+          <div className="mobile-card text-center">
+            <p className="text-[16px] text-gray-500">No parent in this family yet. Invite a parent to get started.</p>
           </div>
         )}
 
+        {/* Quick Actions - Horizontal scroll */}
+        <div>
+          <p className="section-header">Quick Actions</p>
+          <div className="scroll-snap-x">
+            {parentUser?.phone && (
+              <a href={`tel:${parentUser.phone}`} className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+                <span className="text-[28px]">{'\uD83D\uDCDE'}</span>
+                <span className="text-[12px] font-semibold text-gray-700">Call</span>
+              </a>
+            )}
+            <Link href="/dashboard/messages" className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+              <span className="text-[28px]">{'\uD83D\uDCAC'}</span>
+              <span className="text-[12px] font-semibold text-gray-700">Message</span>
+            </Link>
+            <Link href="/dashboard/health" className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+              <span className="text-[28px]">{'\uD83C\uDFCB'}</span>
+              <span className="text-[12px] font-semibold text-gray-700">Health</span>
+            </Link>
+            <Link href="/dashboard/insights" className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+              <span className="text-[28px]">{'\uD83D\uDCA1'}</span>
+              <span className="text-[12px] font-semibold text-gray-700">Insights</span>
+            </Link>
+            <Link href="/dashboard/calls" className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+              <span className="text-[28px]">{'\uD83C\uDF99'}</span>
+              <span className="text-[12px] font-semibold text-gray-700">Calls</span>
+            </Link>
+            <Link href="/dashboard/memory-book" className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+              <span className="text-[28px]">{'\uD83D\uDCD6'}</span>
+              <span className="text-[12px] font-semibold text-gray-700">Memory</span>
+            </Link>
+            <Link href="/dashboard/voice-setup" className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+              <span className="text-[28px]">{'\uD83C\uDFA4'}</span>
+              <span className="text-[12px] font-semibold text-gray-700">Voice</span>
+            </Link>
+            <Link href="/dashboard/parent/listen" className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+              <span className="text-[28px]">{'\uD83C\uDFA7'}</span>
+              <span className="text-[12px] font-semibold text-gray-700">Listen</span>
+            </Link>
+            <Link href="/dashboard/parent/phonebook" className="mobile-card flex flex-col items-center justify-center gap-2 w-[80px] !p-3 text-center">
+              <span className="text-[28px]">{'\uD83D\uDCDE'}</span>
+              <span className="text-[12px] font-semibold text-gray-700">Phonebook</span>
+            </Link>
+          </div>
+        </div>
+
         {/* 7-Day Calendar */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">This Week</h3>
-          <div className="grid grid-cols-7 gap-2">
+        <div className="mobile-card">
+          <p className="section-header !px-0 !mb-3">This Week</p>
+          <div className="grid grid-cols-7 gap-1">
             {days.map((day) => {
               const checkin = getCheckinForDay(day)
               const isToday = day.toDateString() === new Date().toDateString()
               const isPast = day < new Date() && !isToday
-              let dotColor = 'bg-gray-100' // missed/future
+              let dotColor = 'bg-gray-100'
               if (checkin) {
-                dotColor = checkin.mood === 'great' ? 'bg-green-400' : checkin.mood === 'ok' ? 'bg-yellow-400' : 'bg-red-400'
+                dotColor = checkin.mood === 'great' ? 'bg-[#34C759]' : checkin.mood === 'ok' ? 'bg-[#FF9F0A]' : 'bg-[#FF453A]'
               } else if (isPast) {
                 dotColor = 'bg-gray-200'
               }
               return (
                 <div key={day.toISOString()} className="flex flex-col items-center gap-1">
-                  <span className={`text-xs ${isToday ? 'font-bold text-[#FF6B35]' : 'text-gray-400'}`}>{dayLabels[day.getDay()]}</span>
-                  <span className={`text-xs ${isToday ? 'font-bold text-gray-900' : 'text-gray-400'}`}>{day.getDate()}</span>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${dotColor} ${isToday && !checkin ? 'border-2 border-dashed border-[#FF6B35] bg-transparent' : ''}`}>
-                    {checkin && <span className="text-white text-xs font-bold">{checkin.mood === 'great' ? '\u2713' : checkin.mood === 'ok' ? '-' : '!'}</span>}
+                  <span className={`text-[11px] ${isToday ? 'font-bold text-[#FF6B35]' : 'text-gray-400'}`}>{dayLabels[day.getDay()]}</span>
+                  <span className={`text-[11px] ${isToday ? 'font-bold text-gray-900' : 'text-gray-400'}`}>{day.getDate()}</span>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center ${dotColor} ${isToday && !checkin ? 'border-2 border-dashed border-[#FF6B35] bg-transparent' : ''}`}>
+                    {checkin && <span className="text-white text-[11px] font-bold">{checkin.mood === 'great' ? '\u2713' : checkin.mood === 'ok' ? '-' : '!'}</span>}
                   </div>
                 </div>
               )
             })}
           </div>
           <div className="flex gap-4 mt-3 justify-center">
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-400" /><span className="text-xs text-gray-400">Great</span></div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-yellow-400" /><span className="text-xs text-gray-400">OK</span></div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-400" /><span className="text-xs text-gray-400">Not great</span></div>
-            <div className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-gray-200" /><span className="text-xs text-gray-400">Missed</span></div>
+            <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#34C759]" /><span className="text-[11px] text-gray-400">Great</span></div>
+            <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#FF9F0A]" /><span className="text-[11px] text-gray-400">OK</span></div>
+            <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-[#FF453A]" /><span className="text-[11px] text-gray-400">Not great</span></div>
+            <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-full bg-gray-200" /><span className="text-[11px] text-gray-400">Missed</span></div>
           </div>
         </div>
 
         {/* Stats Row */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-2xl p-4 shadow-sm text-center">
-            <p className="text-xs text-gray-500 mb-1">Avg Check-in</p>
-            <p className="text-lg font-bold text-gray-900">{avgCheckinTime || '--'}</p>
+          <div className="mobile-card !p-3 text-center">
+            <p className="text-[11px] text-gray-500 mb-1">Avg Check-in</p>
+            <p className="text-[18px] font-bold text-gray-900">{avgCheckinTime || '--'}</p>
           </div>
-          <div className="bg-white rounded-2xl p-4 shadow-sm text-center">
-            <p className="text-xs text-gray-500 mb-1">This Month</p>
-            <p className="text-lg font-bold text-[#FF6B35]">{monthTotal}</p>
+          <div className="mobile-card !p-3 text-center">
+            <p className="text-[11px] text-gray-500 mb-1">This Month</p>
+            <p className="text-[18px] font-bold text-[#FF6B35]">{monthTotal}</p>
           </div>
-          <div className="bg-white rounded-2xl p-4 shadow-sm text-center">
-            <p className="text-xs text-gray-500 mb-1">Mood Split</p>
+          <div className="mobile-card !p-3 text-center">
+            <p className="text-[11px] text-gray-500 mb-1">Mood Split</p>
             <div className="flex justify-center gap-1 mt-1">
               {totalMoods > 0 ? (
                 <>
-                  <div className="h-4 bg-green-400 rounded" style={{ width: `${Math.max((moodDist.great / totalMoods) * 50, 2)}px` }} title={`Great: ${moodDist.great}`} />
-                  <div className="h-4 bg-yellow-400 rounded" style={{ width: `${Math.max((moodDist.ok / totalMoods) * 50, 2)}px` }} title={`OK: ${moodDist.ok}`} />
-                  <div className="h-4 bg-red-400 rounded" style={{ width: `${Math.max((moodDist.not_great / totalMoods) * 50, 2)}px` }} title={`Not great: ${moodDist.not_great}`} />
+                  <div className="h-4 bg-[#34C759] rounded" style={{ width: `${Math.max((moodDist.great / totalMoods) * 50, 2)}px` }} title={`Great: ${moodDist.great}`} />
+                  <div className="h-4 bg-[#FF9F0A] rounded" style={{ width: `${Math.max((moodDist.ok / totalMoods) * 50, 2)}px` }} title={`OK: ${moodDist.ok}`} />
+                  <div className="h-4 bg-[#FF453A] rounded" style={{ width: `${Math.max((moodDist.not_great / totalMoods) * 50, 2)}px` }} title={`Not great: ${moodDist.not_great}`} />
                 </>
               ) : (
-                <span className="text-xs text-gray-400">No data</span>
+                <span className="text-[11px] text-gray-400">No data</span>
               )}
             </div>
           </div>
@@ -439,44 +498,18 @@ export default function DashboardPage() {
 
         {/* Today's Question Answer */}
         {todayAnswer && (
-          <div className="bg-gradient-to-r from-[#4ECDC4] to-[#45b7aa] rounded-2xl p-5 text-white shadow-sm">
-            <p className="text-xs opacity-80 mb-1">Today&apos;s Question</p>
-            <p className="text-sm font-medium mb-2">&ldquo;{todayAnswer.question}&rdquo;</p>
-            <p className="text-base">{todayAnswer.answer}</p>
+          <div className="bg-gradient-to-r from-[#4ECDC4] to-[#45b7aa] rounded-[16px] p-5 text-white" style={{ boxShadow: '0 2px 8px rgba(78, 205, 196, 0.3)' }}>
+            <p className="text-[12px] opacity-80 mb-1">Today&apos;s Question</p>
+            <p className="text-[14px] font-medium mb-2">&ldquo;{todayAnswer.question}&rdquo;</p>
+            <p className="text-[16px]">{todayAnswer.answer}</p>
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-5 gap-2">
-          {parentUser?.phone && (
-            <a href={`tel:${parentUser.phone}`} className="bg-white rounded-2xl p-3 shadow-sm text-center hover:shadow-md transition-shadow">
-              <div className="text-xl mb-1">{'\u{1F4DE}'}</div>
-              <p className="text-xs font-medium text-gray-700">Call</p>
-            </a>
-          )}
-          <Link href="/dashboard/messages" className="bg-white rounded-2xl p-3 shadow-sm text-center hover:shadow-md transition-shadow">
-            <div className="text-xl mb-1">{'\u{1F4AC}'}</div>
-            <p className="text-xs font-medium text-gray-700">Message</p>
-          </Link>
-          <Link href="/dashboard/health" className="bg-white rounded-2xl p-3 shadow-sm text-center hover:shadow-md transition-shadow">
-            <div className="text-xl mb-1">{'\u{1F3CB}'}</div>
-            <p className="text-xs font-medium text-gray-700">Health</p>
-          </Link>
-          <Link href="/dashboard/insights" className="bg-white rounded-2xl p-3 shadow-sm text-center hover:shadow-md transition-shadow">
-            <div className="text-xl mb-1">{'\u{1F4A1}'}</div>
-            <p className="text-xs font-medium text-gray-700">Insights</p>
-          </Link>
-          <Link href="/dashboard/settings" className="bg-white rounded-2xl p-3 shadow-sm text-center hover:shadow-md transition-shadow">
-            <div className="text-xl mb-1">{'\u2699\uFE0F'}</div>
-            <p className="text-xs font-medium text-gray-700">Settings</p>
-          </Link>
-        </div>
-
         {/* Messages Section */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
+        <div className="mobile-card">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Messages</h3>
-            <Link href="/dashboard/messages" className="text-xs text-[#FF6B35] font-medium">View all</Link>
+            <h3 className="text-[17px] font-semibold text-gray-900">Messages</h3>
+            <Link href="/dashboard/messages" className="text-[13px] text-[#FF6B35] font-medium">View all</Link>
           </div>
           <form onSubmit={handleSendMessage} className="flex gap-2 mb-4">
             <input
@@ -484,29 +517,29 @@ export default function DashboardPage() {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Send a message..."
-              className="flex-1 px-4 py-2.5 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-sm text-gray-900"
+              className="flex-1 px-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6B35] text-[16px] text-gray-900"
             />
             <button
               type="submit"
               disabled={sendingMsg || !newMessage.trim()}
-              className="bg-[#FF6B35] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#e55a2b] transition-colors disabled:opacity-50"
+              className="bg-[#FF6B35] text-white px-5 py-3 rounded-full text-[14px] font-medium transition-colors disabled:opacity-50"
             >
               Send
             </button>
           </form>
           {messages.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-4">No messages yet. Send the first one!</p>
+            <p className="text-gray-400 text-[14px] text-center py-4">No messages yet. Send the first one!</p>
           ) : (
             <div className="space-y-3">
               {messages.slice(0, 3).map((msg) => (
                 <div key={msg.id} className="flex gap-3 items-start">
-                  <div className="w-8 h-8 rounded-full bg-[#4ECDC4] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-[#4ECDC4] flex items-center justify-center text-white text-[13px] font-bold shrink-0">
                     {(msg.sender_name || msg.sender_id).charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900 truncate">{msg.content}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {new Date(msg.created_at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                    <p className="text-[15px] text-gray-900 truncate">{msg.content}</p>
+                    <p className="text-[12px] text-gray-400 mt-0.5">
+                      {new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
                     </p>
                   </div>
                 </div>
@@ -515,28 +548,14 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* More Actions */}
-        <div className="grid grid-cols-2 gap-3">
-          <Link href="/dashboard/calls" className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="text-2xl mb-2">{'\u{1F399}'}</div>
-            <p className="text-sm font-semibold text-gray-900">Voice Calls</p>
-            <p className="text-xs text-gray-400 mt-1">AI call summaries</p>
-          </Link>
-          <Link href="/dashboard/memory-book" className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="text-2xl mb-2">{'\u{1F4D6}'}</div>
-            <p className="text-sm font-semibold text-gray-900">Memory Book</p>
-            <p className="text-xs text-gray-400 mt-1">Daily stories</p>
-          </Link>
-        </div>
-
         {/* Voice Cloning Setup */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
+        <div className="mobile-card">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="text-xl">{'\uD83C\uDFA4'}</span>
-              <h3 className="text-lg font-semibold text-gray-900">Voice Cloning</h3>
+              <span className="text-[22px]">{'\uD83C\uDFA4'}</span>
+              <h3 className="text-[17px] font-semibold text-gray-900">Voice Cloning</h3>
             </div>
-            <span className="text-xs text-gray-400">
+            <span className="text-[12px] text-gray-400">
               {voiceProfiles.length} voice{voiceProfiles.length !== 1 ? 's' : ''} created
             </span>
           </div>
@@ -544,8 +563,8 @@ export default function DashboardPage() {
             <div className="space-y-2 mb-4">
               {voiceProfiles.map((vp) => (
                 <div key={vp.id} className="flex items-center justify-between bg-[#FFF8F0] rounded-xl px-4 py-3">
-                  <span className="text-sm font-medium text-gray-900">{vp.voice_name}</span>
-                  <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                  <span className="text-[14px] font-medium text-gray-900">{vp.voice_name}</span>
+                  <span className={`text-[12px] font-semibold px-2 py-1 rounded-full ${
                     vp.status === 'ready'
                       ? 'bg-green-100 text-green-700'
                       : vp.status === 'processing'
@@ -558,24 +577,24 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400 mb-4">No voices set up yet. Clone a voice so your parent can hear stories in a familiar voice.</p>
+            <p className="text-[14px] text-gray-400 mb-4">No voices set up yet. Clone a voice so your parent can hear stories in a familiar voice.</p>
           )}
           <Link
             href="/dashboard/voice-setup"
-            className="block w-full bg-[#4ECDC4] text-white py-3 rounded-xl text-center font-semibold text-sm hover:bg-[#3dbdb5] transition-colors"
+            className="touch-button bg-[#4ECDC4] text-white text-[16px]"
           >
             {voiceProfiles.length > 0 ? 'Manage Voices' : 'Set up a voice'}
           </Link>
         </div>
 
         {/* Invite Family Card */}
-        <Link href="/dashboard/invite" className="block bg-gradient-to-r from-[#FF6B35] to-[#ff8a5c] rounded-2xl p-5 text-white shadow-sm hover:shadow-md transition-shadow">
+        <Link href="/dashboard/invite" className="block bg-gradient-to-r from-[#FF6B35] to-[#ff8a5c] rounded-[16px] p-5 text-white" style={{ boxShadow: '0 2px 8px rgba(255, 107, 53, 0.3)' }}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-semibold">Invite Family Members</p>
-              <p className="text-sm opacity-80 mt-1">Share your family code and stay connected</p>
+              <p className="text-[16px] font-semibold">Invite Family Members</p>
+              <p className="text-[14px] opacity-80 mt-1">Share your family code and stay connected</p>
             </div>
-            <span className="text-2xl">{'\u{1F46A}'}</span>
+            <span className="text-[32px]">{'\uD83D\uDC6A'}</span>
           </div>
         </Link>
       </div>

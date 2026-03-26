@@ -115,7 +115,7 @@ export default function MoodDiaryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF8F0] pb-10">
+    <div className="min-h-screen bg-[#FFF8F0] pb-24">
       <div className="max-w-lg mx-auto px-5 pt-8 space-y-6">
 
         {/* Header */}

@@ -1,12 +1,14 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import NavbarWrapper from '@/components/NavbarWrapper'
+import BottomTabBar from '@/components/BottomTabBar'
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-})
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   title: 'FamilyPing',
@@ -16,17 +18,10 @@ export const metadata: Metadata = {
     icon: '/favicon.png',
     apple: '/icons/icon-192.png',
   },
-  themeColor: '#FF6B35',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'FamilyPing',
-  },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
   },
 }
 
@@ -36,10 +31,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans bg-[#FFF8F0]">
-        <NavbarWrapper />
-        <main className="flex-1">{children}</main>
+    <html lang="en" className="h-full antialiased">
+      <head>
+        <meta name="theme-color" content="#FF6B35" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
+      <body className="min-h-full flex flex-col bg-[#FFF8F0] font-system">
+        <div className="safe-area-top" />
+        <main className="flex-1 pb-[80px]">{children}</main>
+        <BottomTabBar />
       </body>
     </html>
   )

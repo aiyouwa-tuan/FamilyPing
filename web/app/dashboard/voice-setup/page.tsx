@@ -267,7 +267,7 @@ export default function VoiceSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF8F0] pb-12">
+    <div className="min-h-screen bg-[#FFF8F0] pb-24">
       <div className="max-w-lg mx-auto px-5 pt-8 space-y-6">
 
         {/* Header */}

@@ -13,6 +13,7 @@ export default function HealthDashboard() {
   const [metrics, setMetrics] = useState<DailyMetric[]>([])
   const [anomalies, setAnomalies] = useState<Anomaly[]>([])
   const [weeklySummary, setWeeklySummary] = useState<WeeklySummary | null>(null)
+  const [healthSyncSleep, setHealthSyncSleep] = useState<{ sleep_minutes: number } | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const supabase = createClient()
@@ -47,6 +48,20 @@ export default function HealthDashboard() {
       const yesterdayM = metricsData.find(m => m.date === yesterday)
       if (todayM) setTodayMetric(todayM)
       if (yesterdayM?.steps) setYesterdaySteps(yesterdayM.steps)
+    }
+
+    // Get sleep data from health_sync (priority over daily_metrics)
+    const { data: healthSyncData } = await supabase
+      .from('health_sync')
+      .select('sleep_minutes')
+      .eq('user_id', targetUserId)
+      .not('sleep_minutes', 'is', null)
+      .order('synced_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (healthSyncData?.sleep_minutes) {
+      setHealthSyncSleep(healthSyncData)
     }
 
     // Get anomalies
@@ -96,8 +111,10 @@ export default function HealthDashboard() {
     ? todayMetric.steps > yesterdaySteps ? 'up' : todayMetric.steps < yesterdaySteps ? 'down' : 'flat'
     : null
 
-  // Sleep data from latest metric
+  // Sleep data: priority health_sync > daily_metrics
+  const sleepFromSync = healthSyncSleep?.sleep_minutes ? healthSyncSleep.sleep_minutes / 60 : null
   const latestWithSleep = [...metrics].reverse().find(m => m.sleep_hours)
+  const displaySleepHours = sleepFromSync ?? latestWithSleep?.sleep_hours ?? null
 
   return (
     <div className="min-h-screen bg-[#FFF8F0] py-8 pb-24">
@@ -157,17 +174,17 @@ export default function HealthDashboard() {
         {/* Sleep Data */}
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <h3 className="text-sm font-semibold text-gray-700 mb-3">Sleep</h3>
-          {latestWithSleep ? (
+          {displaySleepHours ? (
             <div className="flex items-center gap-6">
               <div>
-                <p className="text-3xl font-bold text-[#4ECDC4]">{latestWithSleep.sleep_hours?.toFixed(1)}</p>
+                <p className="text-3xl font-bold text-[#4ECDC4]">{displaySleepHours.toFixed(1)}</p>
                 <p className="text-xs text-gray-400">hours</p>
               </div>
               <div className="flex-1">
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-[#4ECDC4] rounded-full transition-all"
-                    style={{ width: `${Math.min((latestWithSleep.sleep_hours || 0) / 10 * 100, 100)}%` }}
+                    style={{ width: `${Math.min(displaySleepHours / 10 * 100, 100)}%` }}
                   />
                 </div>
                 <div className="flex justify-between mt-1">
@@ -179,7 +196,7 @@ export default function HealthDashboard() {
           ) : (
             <p className="text-gray-400 text-sm">No sleep data available.</p>
           )}
-          {latestWithSleep?.sleep_quality && (
+          {!sleepFromSync && latestWithSleep?.sleep_quality && (
             <p className="text-xs text-gray-500 mt-2">Quality: {latestWithSleep.sleep_quality}</p>
           )}
         </div>
@@ -216,7 +233,7 @@ export default function HealthDashboard() {
                     <p className="text-sm font-semibold text-gray-900">{a.type}</p>
                   </div>
                   <p className="text-sm text-gray-600">{a.description}</p>
-                  <p className="text-xs text-gray-400 mt-1">{new Date(a.created_at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</p>
+                  <p className="text-xs text-gray-400 mt-1">{new Date(a.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</p>
                 </div>
                 <button
                   onClick={() => dismissAnomaly(a.id)}

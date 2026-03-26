@@ -58,7 +58,6 @@ export default function ParentDashboard() {
 
   const fetchWeather = useCallback(async () => {
     try {
-      // Try to get user location
       const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
       })
@@ -147,7 +146,6 @@ export default function ParentDashboard() {
 
     if (vpData) {
       setVoiceProfile(vpData)
-      // Check for pre-generated morning greeting
       const todayDate = new Date().toISOString().split('T')[0]
       const { data: greetingUrl } = supabase.storage
         .from('audio')
@@ -183,7 +181,6 @@ export default function ParentDashboard() {
     if (!questionAnswer.trim() || !currentUser) return
     setSubmittingAnswer(true)
 
-    // Update the most recent checkin with the answer
     const todayStart = new Date()
     todayStart.setHours(0, 0, 0, 0)
     await supabase
@@ -286,128 +283,86 @@ export default function ParentDashboard() {
   const weatherEmoji = weather ? (WEATHER_ICONS[weather.icon] || '\u2600\uFE0F') : '\u2600\uFE0F'
 
   return (
-    <div className="min-h-screen bg-[#FFF8F0] pb-32">
-      <div className="max-w-lg mx-auto px-5 pt-8 space-y-6">
+    <div className="min-h-screen bg-[#FFF8F0] px-5 pt-6 pb-24">
+      <div className="max-w-[500px] mx-auto space-y-5">
 
-        {/* Greeting + Date */}
+        {/* Greeting + Weather */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-3">
-            <h1 className="text-[32px] font-bold text-gray-900 leading-tight">
+            <h1 className="text-[28px] font-bold text-gray-900 leading-tight">
               Good {getTimeOfDay()}, {currentUser.name}
             </h1>
             {greetingAudioUrl && (
               <button
                 onClick={handlePlayGreeting}
-                className={`text-[28px] p-2 rounded-full transition-all ${
+                className={`text-[24px] w-[48px] h-[48px] rounded-full flex items-center justify-center transition-all ${
                   playingGreeting
                     ? 'bg-[#FF6B35] text-white animate-pulse'
-                    : 'bg-orange-100 text-[#FF6B35] hover:bg-orange-200'
+                    : 'bg-orange-100 text-[#FF6B35]'
                 }`}
                 aria-label={playingGreeting ? 'Stop greeting' : 'Play greeting'}
               >
-                {playingGreeting ? '\uD83D\uDD0A' : '\uD83D\uDD0A'}
+                {'\uD83D\uDD0A'}
               </button>
             )}
           </div>
-          <p className="text-[22px] text-gray-500 mt-2">
+          <p className="text-[18px] text-gray-500 mt-1">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </p>
         </div>
 
         {/* Weather Card */}
-        <div className="bg-gradient-to-br from-[#4ECDC4] to-[#38b2ac] rounded-3xl p-7 text-white shadow-lg">
+        <div className="bg-gradient-to-br from-[#4ECDC4] to-[#38b2ac] rounded-[20px] p-6 text-white" style={{ boxShadow: '0 4px 12px rgba(78, 205, 196, 0.3)' }}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[20px] opacity-90 font-medium">Today&apos;s Weather</p>
-              <p className="text-[48px] font-bold mt-1 leading-none">
+              <p className="text-[16px] opacity-90 font-medium">Today&apos;s Weather</p>
+              <p className="text-[44px] font-bold mt-1 leading-none">
                 {weather ? `${weather.temp}\u00B0F` : '--'}
               </p>
-              <p className="text-[20px] opacity-90 mt-2 capitalize">
+              <p className="text-[18px] opacity-90 mt-2 capitalize">
                 {weather?.description || 'Loading...'}
               </p>
             </div>
-            <div className="text-[72px] leading-none">{weatherEmoji}</div>
+            <div className="text-[64px] leading-none">{weatherEmoji}</div>
           </div>
-        </div>
-
-        {/* Listen Section */}
-        <div className="bg-white rounded-3xl p-7 shadow-sm border border-orange-100">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-[24px]">{'\uD83C\uDFA7'}</span>
-            <h3 className="text-[22px] font-semibold text-gray-900">Listen</h3>
-          </div>
-          <p className="text-[20px] text-gray-600 mb-5 leading-relaxed">
-            {voiceProfile
-              ? `Hear stories in ${voiceProfile.voice_name}'s voice`
-              : 'Ask your family to set up a voice for you'}
-          </p>
-          <Link
-            href="/dashboard/parent/listen"
-            className="block w-full bg-[#FF6B35] text-white py-4 rounded-2xl font-bold text-[22px] text-center hover:bg-[#e55a2b] transition-colors min-h-[64px] active:scale-[0.98]"
-          >
-            {'\u25B6'} Play Something
-          </Link>
-          <Link
-            href="/dashboard/parent/read-aloud"
-            className="block text-center mt-4 text-[18px] text-[#FF6B35] font-medium hover:underline"
-          >
-            {'\uD83D\uDCD6'} Read Aloud
-          </Link>
-        </div>
-
-        {/* Latest Message from Family */}
-        <div className="bg-white rounded-3xl p-7 shadow-sm border border-orange-100">
-          <h3 className="text-[20px] font-semibold text-[#FF6B35] mb-3">
-            Message from Family
-          </h3>
-          {latestMessage ? (
-            <div>
-              <p className="text-[22px] text-gray-900 leading-relaxed">{latestMessage.content}</p>
-              <p className="text-[16px] text-gray-400 mt-3">
-                {new Date(latestMessage.created_at).toLocaleString()}
-              </p>
-            </div>
-          ) : (
-            <p className="text-[20px] text-gray-400">No messages yet</p>
-          )}
         </div>
 
         {/* Mood Check-in */}
-        <div className="bg-white rounded-3xl p-7 shadow-sm border border-orange-100">
-          <h3 className="text-[22px] font-semibold text-gray-900 mb-4">
+        <div className="mobile-card">
+          <h3 className="text-[22px] font-semibold text-gray-900 mb-4 text-center">
             How are you feeling today?
           </h3>
           {checkinDone ? (
             <div className="text-center py-3">
-              <p className="text-[24px] font-medium text-green-600">
+              <p className="text-[22px] font-medium text-[#34C759]">
                 Thanks for checking in!
               </p>
-              <p className="text-[20px] text-gray-500 mt-2">
+              <p className="text-[18px] text-gray-500 mt-2">
                 You selected: {moodSelected === 'great' ? 'Great' : moodSelected === 'ok' ? 'OK' : 'Not great'}
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-3">
               <button
                 onClick={() => handleMoodSelect('great')}
-                className="flex flex-col items-center gap-3 py-5 px-4 rounded-2xl border-3 border-green-300 bg-green-50 hover:bg-green-100 active:scale-95 transition-all min-h-[100px]"
+                className="touch-button border-2 border-[#34C759] bg-[#F0FFF4] text-[#34C759] gap-4"
               >
-                <span className="text-[48px] leading-none">{'\uD83D\uDE0A'}</span>
-                <span className="text-[20px] font-bold text-green-700">Great</span>
+                <span className="text-[40px] leading-none">{'\uD83D\uDE0A'}</span>
+                <span className="text-[22px] font-bold">Great</span>
               </button>
               <button
                 onClick={() => handleMoodSelect('ok')}
-                className="flex flex-col items-center gap-3 py-5 px-4 rounded-2xl border-3 border-yellow-300 bg-yellow-50 hover:bg-yellow-100 active:scale-95 transition-all min-h-[100px]"
+                className="touch-button border-2 border-[#FF9F0A] bg-[#FFFDF0] text-[#FF9F0A] gap-4"
               >
-                <span className="text-[48px] leading-none">{'\uD83D\uDE10'}</span>
-                <span className="text-[20px] font-bold text-yellow-700">OK</span>
+                <span className="text-[40px] leading-none">{'\uD83D\uDE10'}</span>
+                <span className="text-[22px] font-bold">OK</span>
               </button>
               <button
                 onClick={() => handleMoodSelect('not_great')}
-                className="flex flex-col items-center gap-3 py-5 px-4 rounded-2xl border-3 border-red-300 bg-red-50 hover:bg-red-100 active:scale-95 transition-all min-h-[100px]"
+                className="touch-button border-2 border-[#FF453A] bg-[#FFF5F5] text-[#FF453A] gap-4"
               >
-                <span className="text-[48px] leading-none">{'\uD83D\uDE14'}</span>
-                <span className="text-[20px] font-bold text-red-700">Not great</span>
+                <span className="text-[40px] leading-none">{'\uD83D\uDE14'}</span>
+                <span className="text-[22px] font-bold">Not Great</span>
               </button>
             </div>
           )}
@@ -415,18 +370,18 @@ export default function ParentDashboard() {
 
         {/* Daily Question (shows after check-in) */}
         {checkinDone && (
-          <div className="bg-white rounded-3xl p-7 shadow-sm border border-orange-100">
+          <div className="mobile-card">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[24px]">{'\uD83D\uDCAC'}</span>
-              <h3 className="text-[20px] font-semibold text-[#FF6B35]">
+              <span className="text-[22px]">{'\uD83D\uDCAC'}</span>
+              <h3 className="text-[18px] font-semibold text-[#FF6B35]">
                 Today&apos;s Question
               </h3>
             </div>
-            <p className="text-[22px] text-gray-900 font-medium mb-5 leading-relaxed">
+            <p className="text-[20px] text-gray-900 font-medium mb-4 leading-relaxed">
               {todayQuestion.text}
             </p>
             {answerSent ? (
-              <p className="text-[20px] text-green-600 font-medium">
+              <p className="text-[18px] text-[#34C759] font-medium">
                 Thanks for sharing! Your family will love reading this.
               </p>
             ) : (
@@ -436,12 +391,12 @@ export default function ParentDashboard() {
                   onChange={(e) => setQuestionAnswer(e.target.value)}
                   placeholder="Type your answer here..."
                   rows={3}
-                  className="w-full px-5 py-4 rounded-2xl border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4ECDC4] focus:border-transparent text-[20px] text-gray-900 placeholder:text-gray-400 resize-none"
+                  className="w-full px-4 py-4 rounded-[16px] border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4ECDC4] focus:border-transparent text-[18px] text-gray-900 placeholder:text-gray-400 resize-none"
                 />
                 <button
                   type="submit"
                   disabled={submittingAnswer || !questionAnswer.trim()}
-                  className="w-full bg-[#4ECDC4] text-white py-4 rounded-2xl font-bold text-[22px] hover:bg-[#38b2ac] transition-colors disabled:opacity-50 min-h-[64px] active:scale-[0.98]"
+                  className="touch-button bg-[#4ECDC4] text-white text-[20px] disabled:opacity-50"
                 >
                   {submittingAnswer ? 'Sending...' : 'Send Answer'}
                 </button>
@@ -450,67 +405,121 @@ export default function ParentDashboard() {
           </div>
         )}
 
-        {/* Quick Navigation */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Listen Card */}
+        <div className="mobile-card">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[22px]">{'\uD83C\uDFA7'}</span>
+            <h3 className="text-[20px] font-semibold text-gray-900">Listen</h3>
+          </div>
+          <p className="text-[16px] text-gray-600 mb-4 leading-relaxed">
+            {voiceProfile
+              ? `Hear stories in ${voiceProfile.voice_name}'s voice`
+              : 'Ask your family to set up a voice for you'}
+          </p>
           <Link
-            href="/dashboard/parent/phonebook"
-            className="bg-white rounded-3xl p-5 shadow-sm border border-orange-100 hover:shadow-md transition-shadow text-center min-h-[100px] flex flex-col items-center justify-center active:scale-95"
+            href="/dashboard/parent/listen"
+            className="touch-button bg-[#FF6B35] text-white text-[20px]"
           >
-            <div className="text-[40px] mb-2">{'\uD83D\uDCDE'}</div>
-            <p className="text-[18px] font-bold text-gray-900">Phonebook</p>
+            {'\u25B6'} Play Something
           </Link>
           <Link
-            href="/dashboard/parent/medical-card"
-            className="bg-white rounded-3xl p-5 shadow-sm border border-orange-100 hover:shadow-md transition-shadow text-center min-h-[100px] flex flex-col items-center justify-center active:scale-95"
+            href="/dashboard/parent/read-aloud"
+            className="block text-center mt-3 text-[16px] text-[#FF6B35] font-medium min-h-[44px] flex items-center justify-center"
           >
-            <div className="text-[40px] mb-2">{'\uD83C\uDFE5'}</div>
-            <p className="text-[18px] font-bold text-gray-900">Medical</p>
-          </Link>
-          <Link
-            href="/dashboard/parent/mood-diary"
-            className="bg-white rounded-3xl p-5 shadow-sm border border-orange-100 hover:shadow-md transition-shadow text-center min-h-[100px] flex flex-col items-center justify-center active:scale-95"
-          >
-            <div className="text-[40px] mb-2">{'\uD83D\uDCD6'}</div>
-            <p className="text-[18px] font-bold text-gray-900">Diary</p>
+            {'\uD83D\uDCD6'} Read Aloud
           </Link>
         </div>
-      </div>
 
-      {/* Fixed SOS Button */}
-      <div className="fixed bottom-6 left-0 right-0 px-5 z-50">
-        <div className="max-w-lg mx-auto">
-          {sosActive ? (
-            <div className="bg-red-50 border-2 border-red-300 rounded-3xl p-6 text-center shadow-lg">
-              <p className="text-[28px] font-bold text-red-600">SOS Alert Sent!</p>
-              <p className="text-[20px] text-red-500 mt-2">
-                Your family has been notified.
+        {/* Latest Message from Family */}
+        <div className="mobile-card">
+          <h3 className="text-[18px] font-semibold text-[#FF6B35] mb-3">
+            Message from Family
+          </h3>
+          {latestMessage ? (
+            <div>
+              <p className="text-[18px] text-gray-900 leading-relaxed">{latestMessage.content}</p>
+              <p className="text-[14px] text-gray-400 mt-2">
+                {new Date(latestMessage.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
               </p>
             </div>
           ) : (
-            <div className="relative">
-              <button
-                onMouseDown={handleSOSStart}
-                onMouseUp={handleSOSEnd}
-                onMouseLeave={handleSOSEnd}
-                onTouchStart={handleSOSStart}
-                onTouchEnd={handleSOSEnd}
-                onTouchCancel={handleSOSEnd}
-                className="w-full bg-red-500 text-white py-5 rounded-3xl font-bold text-[24px] shadow-lg shadow-red-500/40 active:bg-red-600 transition-colors min-h-[72px] relative overflow-hidden select-none"
-              >
-                {/* Progress overlay */}
-                {sosHolding && (
-                  <div
-                    className="absolute inset-0 bg-red-700 transition-none"
-                    style={{ width: `${sosProgress}%` }}
-                  />
-                )}
-                <span className="relative z-10">
-                  {sosHolding ? `Hold ${Math.ceil((3000 - (sosProgress / 100) * 3000) / 1000)}s...` : 'SOS \u2014 Hold 3 Seconds'}
-                </span>
-              </button>
-            </div>
+            <p className="text-[16px] text-gray-400">No messages yet</p>
           )}
         </div>
+
+        {/* Tool Cards */}
+        <div className="space-y-3">
+          <Link
+            href="/dashboard/parent/phonebook"
+            className="mobile-card flex items-center gap-4 !py-5"
+          >
+            <span className="text-[36px]">{'\uD83D\uDCDE'}</span>
+            <div className="flex-1">
+              <p className="text-[18px] font-bold text-gray-900">Phonebook</p>
+              <p className="text-[14px] text-gray-500">Call your contacts</p>
+            </div>
+            <span className="text-[20px] text-gray-300">{'\u203A'}</span>
+          </Link>
+          <Link
+            href="/dashboard/parent/medical-card"
+            className="mobile-card flex items-center gap-4 !py-5"
+          >
+            <span className="text-[36px]">{'\uD83C\uDFE5'}</span>
+            <div className="flex-1">
+              <p className="text-[18px] font-bold text-gray-900">Medical Card</p>
+              <p className="text-[14px] text-gray-500">Your medical info</p>
+            </div>
+            <span className="text-[20px] text-gray-300">{'\u203A'}</span>
+          </Link>
+          <Link
+            href="/dashboard/parent/mood-diary"
+            className="mobile-card flex items-center gap-4 !py-5"
+          >
+            <span className="text-[36px]">{'\uD83D\uDCD6'}</span>
+            <div className="flex-1">
+              <p className="text-[18px] font-bold text-gray-900">Mood Diary</p>
+              <p className="text-[14px] text-gray-500">Track how you feel</p>
+            </div>
+            <span className="text-[20px] text-gray-300">{'\u203A'}</span>
+          </Link>
+        </div>
+
+        {/* Bottom spacer for SOS button */}
+        <div className="h-[80px]" />
+      </div>
+
+      {/* Fixed SOS Button - above tab bar */}
+      <div className="sos-button-container">
+        {sosActive ? (
+          <div className="bg-red-50 border-2 border-red-300 rounded-[16px] p-5 text-center" style={{ boxShadow: '0 4px 12px rgba(255, 59, 48, 0.2)' }}>
+            <p className="text-[24px] font-bold text-red-600">SOS Alert Sent!</p>
+            <p className="text-[16px] text-red-500 mt-1">
+              Your family has been notified.
+            </p>
+          </div>
+        ) : (
+          <button
+            onMouseDown={handleSOSStart}
+            onMouseUp={handleSOSEnd}
+            onMouseLeave={handleSOSEnd}
+            onTouchStart={handleSOSStart}
+            onTouchEnd={handleSOSEnd}
+            onTouchCancel={handleSOSEnd}
+            className="w-full bg-[#FF3B30] text-white py-4 rounded-[16px] font-bold text-[22px] min-h-[64px] relative overflow-hidden select-none"
+            style={{ boxShadow: '0 4px 12px rgba(255, 59, 48, 0.4)' }}
+          >
+            {/* Progress overlay */}
+            {sosHolding && (
+              <div
+                className="absolute inset-0 bg-[#CC2D25] transition-none"
+                style={{ width: `${sosProgress}%` }}
+              />
+            )}
+            <span className="relative z-10">
+              {sosHolding ? `Hold ${Math.ceil((3000 - (sosProgress / 100) * 3000) / 1000)}s...` : 'SOS \u2014 Hold 3 Seconds'}
+            </span>
+          </button>
+        )}
       </div>
     </div>
   )

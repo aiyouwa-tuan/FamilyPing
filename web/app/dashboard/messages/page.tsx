@@ -14,6 +14,7 @@ export default function MessagesPage() {
   const [activeTab, setActiveTab] = useState<Tab>('all')
   const [newMessage, setNewMessage] = useState('')
   const [sendingMsg, setSendingMsg] = useState(false)
+  const [familyUsers, setFamilyUsers] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
@@ -46,6 +47,14 @@ export default function MessagesPage() {
     const { data: userData } = await supabase.from('users').select('*').eq('auth_id', authUser.id).limit(1).single()
     if (!userData) { setLoading(false); return }
     setCurrentUser(userData)
+
+    // Fetch all users in the family to resolve sender names
+    const { data: usersData } = await supabase.from('users').select('id, name').eq('family_id', userData.family_id)
+    if (usersData) {
+      const userMap: Record<string, string> = {}
+      usersData.forEach((u: { id: string; name: string }) => { userMap[u.id] = u.name })
+      setFamilyUsers(userMap)
+    }
 
     await fetchMessages(userData, activeTab)
     setLoading(false)
@@ -145,7 +154,7 @@ export default function MessagesPage() {
               <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[80%]`}>
                   {!isMe && (
-                    <p className="text-xs text-gray-500 mb-1 ml-1">{msg.sender_name || 'Unknown'}</p>
+                    <p className="text-xs text-gray-500 mb-1 ml-1">{msg.sender_name || familyUsers[msg.sender_id] || 'Unknown'}</p>
                   )}
                   <div className={`px-4 py-2.5 rounded-2xl text-sm ${
                     isMe
@@ -155,7 +164,7 @@ export default function MessagesPage() {
                     {msg.content}
                   </div>
                   <p className={`text-[10px] mt-1 ${isMe ? 'text-right' : 'text-left'} text-gray-400`}>
-                    {new Date(msg.created_at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                    {new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
                   </p>
                 </div>
               </div>
