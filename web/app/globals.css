@@ -156,6 +156,23 @@ body {
   transform: scale(1.1);
 }
 
+.bottom-tab-img {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.5;
+  filter: grayscale(40%);
+}
+
+.bottom-tab-img-active {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.15);
+}
+
+.bottom-tab-img-inactive {
+  opacity: 0.5;
+  filter: grayscale(40%);
+}
+
 .bottom-tab-label {
   font-size: 10px;
   font-weight: 500;

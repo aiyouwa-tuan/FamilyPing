@@ -4,8 +4,8 @@
     {
       "name": "familyping-app",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "web"],
-      "port": 3000
+      "runtimeArgs": ["run", "dev", "--prefix", "web", "--", "-p", "3002"],
+      "port": 3002
     },
     {
       "name": "familyping-admin",

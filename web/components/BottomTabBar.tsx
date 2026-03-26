@@ -2,13 +2,13 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 interface Tab {
   href: string
   label: string
-  icon: string
-  activeIcon: string
+  iconSrc: string
   matchPaths: string[]
 }
 
@@ -16,36 +16,31 @@ const tabs: Tab[] = [
   {
     href: '/dashboard',
     label: 'Home',
-    icon: '\uD83C\uDFE0',
-    activeIcon: '\uD83C\uDFE0',
+    iconSrc: '/icons/tab-home.png',
     matchPaths: ['/dashboard'],
   },
   {
     href: '/dashboard/health',
     label: 'Health',
-    icon: '\u2764\uFE0F',
-    activeIcon: '\u2764\uFE0F',
+    iconSrc: '/icons/tab-health.png',
     matchPaths: ['/dashboard/health'],
   },
   {
     href: '/dashboard/parent/listen',
     label: 'Listen',
-    icon: '\uD83C\uDFA7',
-    activeIcon: '\uD83C\uDFA7',
+    iconSrc: '/icons/tab-listen.png',
     matchPaths: ['/dashboard/parent/listen'],
   },
   {
     href: '/dashboard/messages',
     label: 'Messages',
-    icon: '\uD83D\uDCAC',
-    activeIcon: '\uD83D\uDCAC',
+    iconSrc: '/icons/tab-messages.png',
     matchPaths: ['/dashboard/messages'],
   },
   {
     href: '/dashboard/settings',
     label: 'Settings',
-    icon: '\u2699\uFE0F',
-    activeIcon: '\u2699\uFE0F',
+    iconSrc: '/icons/tab-settings.png',
     matchPaths: ['/dashboard/settings'],
   },
 ]
@@ -101,9 +96,13 @@ export default function BottomTabBar() {
               href={tab.href}
               className={`bottom-tab ${active ? 'bottom-tab-active' : 'bottom-tab-inactive'}`}
             >
-              <span className={`bottom-tab-icon ${active ? 'bottom-tab-icon-active' : ''}`}>
-                {active ? tab.activeIcon : tab.icon}
-              </span>
+              <Image
+                src={tab.iconSrc}
+                alt={tab.label}
+                width={28}
+                height={28}
+                className={`bottom-tab-img ${active ? 'bottom-tab-img-active' : 'bottom-tab-img-inactive'}`}
+              />
               <span className={`bottom-tab-label ${active ? 'bottom-tab-label-active' : 'bottom-tab-label-inactive'}`}>
                 {tab.label}
               </span>
