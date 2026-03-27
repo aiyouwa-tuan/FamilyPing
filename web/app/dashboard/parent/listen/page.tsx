@@ -523,12 +523,25 @@ export default function ListenPage() {
           )}
         </div>
 
+        {/* Watch Videos link */}
+        <Link
+          href="/dashboard/parent/watch"
+          className="block rounded-3xl p-6 shadow-lg text-center"
+          style={{ background: 'linear-gradient(135deg, #7E57C2, #B39DDB)', boxShadow: '0 4px 16px rgba(126, 87, 194, 0.3)' }}
+        >
+          <div className="text-[40px] mb-2">{'\uD83D\uDCFA'}</div>
+          <p className="text-[24px] font-bold text-white">Watch Videos</p>
+          <p className="text-[18px] text-white/80 mt-1">
+            Exercise, meditation, cooking, nature &amp; more
+          </p>
+        </Link>
+
         {/* "Read to Me" link */}
         <Link
           href="/dashboard/parent/read-aloud"
           className="block bg-gradient-to-br from-[#4ECDC4] to-[#38b2ac] rounded-3xl p-6 shadow-lg text-center"
         >
-          <div className="text-[40px] mb-2">📸</div>
+          <div className="text-[40px] mb-2">{'\uD83D\uDCF8'}</div>
           <p className="text-[24px] font-bold text-white">Read to Me</p>
           <p className="text-[18px] text-white/80 mt-1">
             Take a photo of any text and hear it read aloud

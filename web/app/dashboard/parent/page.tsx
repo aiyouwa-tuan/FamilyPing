@@ -525,6 +525,18 @@ export default function ParentDashboard() {
             </div>
             <span className="text-[20px] text-[#8D7B6E]">{'\u203A'}</span>
           </Link>
+          <Link
+            href="/dashboard/parent/watch"
+            className="mobile-card flex items-center gap-4 !py-5 relative overflow-hidden"
+          >
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#7E57C2] rounded-l-[20px]" />
+            <span className="text-[36px]">{'\uD83D\uDCFA'}</span>
+            <div className="flex-1">
+              <p className="text-[18px] font-bold" style={{ color: '#2D2016' }}>Watch</p>
+              <p className="text-[14px]" style={{ color: '#8D7B6E' }}>Videos for you</p>
+            </div>
+            <span className="text-[20px] text-[#8D7B6E]">{'\u203A'}</span>
+          </Link>
         </div>
 
         {/* Bottom spacer for SOS button */}
