@@ -94,25 +94,25 @@ export function getMeditationScripts(): AudioContent[] {
   return [
     {
       id: 'meditation-1',
-      title: 'Morning Calm',
-      description: 'A gentle 5-minute morning meditation to start your day with peace.',
+      title: 'Gentle Morning Relaxation',
+      description: 'A gentle 5-minute morning relaxation to start your day with peace.',
       category: 'meditation',
       source_type: 'tts_generated',
-      text_content: `Welcome to your morning meditation. Find a comfortable position and gently close your eyes. Take a deep breath in through your nose... hold it for a moment... and slowly exhale through your mouth. Feel the tension leaving your body with each breath. You are safe. You are loved. Your family is thinking of you right now. Take another deep breath... As you breathe in, imagine warm golden sunlight filling your body from head to toe. This warmth is the love of your family surrounding you. With each exhale, release any worry or tension. You don't need to carry anything right now. Just be here, in this moment. The day ahead is full of small joys waiting for you. A warm cup of tea. Sunlight through the window. The sound of birds. Your family's messages on your phone. Take one more deep breath... and when you're ready, slowly open your eyes. You are ready for a beautiful day.`,
+      text_content: `Welcome to your morning relaxation. Find a comfortable position and gently close your eyes. Take a deep breath in through your nose... hold it for a moment... and slowly exhale through your mouth. Feel the tension leaving your body with each breath. You are safe. You are loved. Your family is thinking of you right now. Take another deep breath... As you breathe in, imagine warm golden sunlight filling your body from head to toe. This warmth is the love of your family surrounding you. With each exhale, release any worry or tension. You don't need to carry anything right now. Just be here, in this moment. The day ahead is full of small joys waiting for you. A warm cup of tea. Sunlight through the window. The sound of birds. Your family's messages on your phone. Take one more deep breath... and when you're ready, slowly open your eyes. You are ready for a beautiful day.`,
       duration_seconds: 300,
     },
     {
       id: 'meditation-2',
-      title: 'Evening Gratitude',
+      title: 'Evening Wind-Down for Better Sleep',
       description: 'Reflect on the good moments of your day before sleep.',
       category: 'meditation',
       source_type: 'tts_generated',
-      text_content: `Welcome to your evening gratitude meditation. You've made it through another beautiful day. Let's take a moment to appreciate it. Settle into your bed or chair, and let your body relax. Think about one thing that made you smile today. Maybe it was a message from your family. Maybe it was a delicious meal. Maybe it was simply the warmth of the sun. Hold that memory gently, like a precious gift. Now think of one person you're grateful for. Picture their face. Feel the love between you. Even if they're far away, that love is always here, always real. Take a slow, deep breath... and as you exhale, whisper to yourself: today was a good day. Tomorrow, your family will be thinking of you again. You are never alone. Rest well. Sweet dreams.`,
+      text_content: `Welcome to your evening wind-down. You've made it through another beautiful day. Let's take a moment to appreciate it. Settle into your bed or chair, and let your body relax. Think about one thing that made you smile today. Maybe it was a message from your family. Maybe it was a delicious meal. Maybe it was simply the warmth of the sun. Hold that memory gently, like a precious gift. Now think of one person you're grateful for. Picture their face. Feel the love between you. Even if they're far away, that love is always here, always real. Take a slow, deep breath... and as you exhale, whisper to yourself: today was a good day. Tomorrow, your family will be thinking of you again. You are never alone. Rest well. Sweet dreams.`,
       duration_seconds: 300,
     },
     {
       id: 'meditation-3',
-      title: 'Body Relaxation',
+      title: 'Gentle Body Relaxation (Seated)',
       description: 'Progressive muscle relaxation for better sleep.',
       category: 'meditation',
       source_type: 'tts_generated',
@@ -121,20 +121,20 @@ export function getMeditationScripts(): AudioContent[] {
     },
     {
       id: 'meditation-4',
-      title: 'Gentle Chair Yoga',
+      title: '10-Minute Seated Stretches',
       description: '10-minute seated stretching routine you can do in any chair.',
       category: 'exercise',
       source_type: 'tts_generated',
-      text_content: `Welcome to chair yoga. All you need is a sturdy chair. Sit up tall with your feet flat on the floor. Let's begin. First, neck rolls. Very slowly, drop your chin to your chest. Now roll your head to the right... tilt your right ear toward your shoulder. Hold for a breath. Roll back through center... and to the left. Left ear toward left shoulder. Hold. Roll back to center. Do this two more times, nice and slow. Next, shoulder shrugs. Lift both shoulders up toward your ears... hold... and drop them down. Again, lift... hold... and release. One more time. Now, seated cat-cow. Place your hands on your knees. As you breathe in, arch your back, push your chest forward, look up slightly. As you breathe out, round your back, tuck your chin, pull your belly in. In... arch and open. Out... round and curl. Three more times at your own pace. Wonderful. Now, gentle twist. Place your right hand on your left knee. Look over your left shoulder. Hold for three breaths. Come back to center. Left hand on right knee. Look over your right shoulder. Three breaths. Back to center. Finally, seated forward fold. Slowly walk your hands down your legs toward the floor. Let your head hang heavy. Take three deep breaths here. Slowly roll back up, one vertebra at a time. You did it! Your body thanks you.`,
+      text_content: `Welcome to seated stretches for seniors. All you need is a sturdy chair. Sit up tall with your feet flat on the floor. Let's begin. First, neck rolls. Very slowly, drop your chin to your chest. Now roll your head to the right... tilt your right ear toward your shoulder. Hold for a breath. Roll back through center... and to the left. Left ear toward left shoulder. Hold. Roll back to center. Do this two more times, nice and slow. Next, shoulder shrugs. Lift both shoulders up toward your ears... hold... and drop them down. Again, lift... hold... and release. One more time. Now, seated cat-cow. Place your hands on your knees. As you breathe in, arch your back, push your chest forward, look up slightly. As you breathe out, round your back, tuck your chin, pull your belly in. In... arch and open. Out... round and curl. Three more times at your own pace. Wonderful. Now, gentle twist. Place your right hand on your left knee. Look over your left shoulder. Hold for three breaths. Come back to center. Left hand on right knee. Look over your right shoulder. Three breaths. Back to center. Finally, seated forward fold. Slowly walk your hands down your legs toward the floor. Let your head hang heavy. Take three deep breaths here. Slowly roll back up, one vertebra at a time. You did it! Your body thanks you.`,
       duration_seconds: 600,
     },
     {
       id: 'meditation-5',
-      title: 'Walking Meditation Guide',
+      title: 'Gentle Walking Guide for Seniors',
       description: 'A mindful walking practice for your daily stroll.',
       category: 'exercise',
       source_type: 'tts_generated',
-      text_content: `This is a walking meditation. You can do this anywhere — in your garden, around the block, or even in your living room. Begin walking at a comfortable pace. Not too fast, not too slow. Just natural. Now, bring your attention to your feet. Feel each step. Heel... ball... toes. Heel... ball... toes. The ground is solid beneath you, supporting you. Notice the air on your skin. Is it warm? Cool? Can you feel a breeze? What do you hear? Birds? Cars? Leaves? Just notice, without judging. Now look around you. What colors do you see? Pick one thing that's beautiful — a flower, a cloud, a color on a building. Appreciate it for a moment. Keep walking. With each step, think: I am here. I am alive. I am loved. If your mind wanders to worries or tasks, gently bring it back to your feet. Heel... ball... toes. You are doing something wonderful for your body right now. Every step is a gift of health. Walk for as long as feels good. When you're ready to stop, stand still for a moment. Take one deep breath. Smile. You did great today.`,
+      text_content: `This is a gentle walking guide for seniors. You can do this anywhere — in your garden, around the block, or even in your living room. Begin walking at a comfortable pace. Not too fast, not too slow. Just natural. Now, bring your attention to your feet. Feel each step. Heel... ball... toes. Heel... ball... toes. The ground is solid beneath you, supporting you. Notice the air on your skin. Is it warm? Cool? Can you feel a breeze? What do you hear? Birds? Cars? Leaves? Just notice, without judging. Now look around you. What colors do you see? Pick one thing that's beautiful — a flower, a cloud, a color on a building. Appreciate it for a moment. Keep walking. With each step, think: I am here. I am alive. I am loved. If your mind wanders to worries or tasks, gently bring it back to your feet. Heel... ball... toes. You are doing something wonderful for your body right now. Every step is a gift of health. Walk for as long as feels good. When you're ready to stop, stand still for a moment. Take one deep breath. Smile. You did great today.`,
       duration_seconds: 480,
     },
   ];
@@ -146,7 +146,7 @@ export function getWellnessArticles(): AudioContent[] {
   return [
     {
       id: 'wellness-1',
-      title: 'The Power of a Good Night\'s Sleep',
+      title: 'Better Sleep Tips for Seniors',
       description: 'Simple tips for better sleep as you age.',
       category: 'wellness',
       source_type: 'tts_generated',
@@ -155,7 +155,7 @@ export function getWellnessArticles(): AudioContent[] {
     },
     {
       id: 'wellness-2',
-      title: 'Staying Hydrated: Why Water Matters',
+      title: 'Staying Healthy After 65',
       description: 'How much water do you really need each day?',
       category: 'wellness',
       source_type: 'tts_generated',
@@ -164,7 +164,7 @@ export function getWellnessArticles(): AudioContent[] {
     },
     {
       id: 'wellness-3',
-      title: 'Brain Exercises You Can Do Anywhere',
+      title: 'Keep Your Mind Sharp: Brain Games for Seniors',
       description: 'Keep your mind sharp with these simple daily activities.',
       category: 'wellness',
       source_type: 'tts_generated',

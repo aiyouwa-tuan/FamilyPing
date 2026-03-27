@@ -35,12 +35,12 @@ function mapApiContent(items: AudioContent[], categoryOverride?: Category): Cont
     // Normalise audiobook -> stories for the UI tab
     if (category === ('audiobook' as string)) category = 'stories'
 
-    let emoji = '🌿'
+    let emoji = '💊'
     switch (category) {
-      case 'wellness': emoji = '🌿'; break
+      case 'wellness': emoji = '💊'; break
       case 'stories': emoji = '📖'; break
-      case 'meditation': emoji = '🧘'; break
-      case 'exercise': emoji = '🤸'; break
+      case 'meditation': emoji = '😌'; break
+      case 'exercise': emoji = '🪑'; break
       case 'radio': emoji = '📻'; break
     }
 
@@ -97,10 +97,10 @@ const FALLBACK_CONTENT: ContentItem[] = [
 ]
 
 const CATEGORIES: { key: Category; label: string; emoji: string }[] = [
-  { key: 'wellness', label: 'Wellness', emoji: '🌿' },
-  { key: 'stories', label: 'Stories', emoji: '📖' },
-  { key: 'meditation', label: 'Meditation', emoji: '🧘' },
-  { key: 'exercise', label: 'Exercise', emoji: '🤸' },
+  { key: 'wellness', label: 'Health Tips', emoji: '💊' },
+  { key: 'stories', label: 'Audiobooks', emoji: '📖' },
+  { key: 'meditation', label: 'Relaxation', emoji: '😌' },
+  { key: 'exercise', label: 'Chair Exercise', emoji: '🪑' },
   { key: 'radio', label: 'Radio', emoji: '📻' },
 ]
 
@@ -532,7 +532,7 @@ export default function ListenPage() {
           <div className="text-[40px] mb-2">{'\uD83D\uDCFA'}</div>
           <p className="text-[24px] font-bold text-white">Watch Videos</p>
           <p className="text-[18px] text-white/80 mt-1">
-            Exercise, meditation, cooking, nature &amp; more
+            Chair exercise, relaxation, cooking, nature &amp; more
           </p>
         </Link>
 

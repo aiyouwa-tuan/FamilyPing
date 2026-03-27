@@ -257,6 +257,44 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Role Switcher */}
+        {currentUser && (
+          <div className="mobile-card">
+            <h3 className="font-bold text-[var(--foreground)] mb-3">Switch Role</h3>
+            <p className="text-sm text-[var(--text-light)] mb-3">
+              Currently viewing as: <span className="font-semibold text-[var(--primary)]">{currentUser.role === 'parent' ? 'Parent (Elderly)' : 'Family Member'}</span>
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={async () => {
+                  await supabase.from('users').update({ role: 'parent' }).eq('id', currentUser.id)
+                  window.location.href = '/dashboard/parent'
+                }}
+                className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+                  currentUser.role === 'parent'
+                    ? 'bg-[var(--primary)] text-white'
+                    : 'bg-gray-100 text-[var(--text-warm)] hover:bg-orange-50'
+                }`}
+              >
+                👴 Parent
+              </button>
+              <button
+                onClick={async () => {
+                  await supabase.from('users').update({ role: 'family' }).eq('id', currentUser.id)
+                  window.location.href = '/dashboard'
+                }}
+                className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+                  currentUser.role === 'family'
+                    ? 'bg-[var(--secondary)] text-white'
+                    : 'bg-gray-100 text-[var(--text-warm)] hover:bg-teal-50'
+                }`}
+              >
+                👨‍👩‍👧 Family
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Sign Out */}
         <button
           onClick={handleSignOut}

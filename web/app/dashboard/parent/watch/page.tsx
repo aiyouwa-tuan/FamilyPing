@@ -15,39 +15,39 @@ interface VideoItem {
 }
 
 const CATEGORY_META: Record<VideoCategory, { emoji: string; label: string; gradient: string }> = {
-  exercise: { emoji: '\uD83C\uDFCB\uFE0F', label: 'Exercise', gradient: 'linear-gradient(135deg, #FF6B35, #FF8F65)' },
-  meditation: { emoji: '\uD83E\uDDD8', label: 'Meditation', gradient: 'linear-gradient(135deg, #4ECDC4, #7EDDD6)' },
-  cooking: { emoji: '\uD83D\uDC68\u200D\uD83C\uDF73', label: 'Cooking', gradient: 'linear-gradient(135deg, #FFD166, #FFE0A0)' },
-  nature: { emoji: '\uD83C\uDF3F', label: 'Nature', gradient: 'linear-gradient(135deg, #66BB6A, #81C784)' },
-  faith: { emoji: '\u26EA', label: 'Faith', gradient: 'linear-gradient(135deg, #7E57C2, #B39DDB)' },
+  exercise: { emoji: '🪑', label: 'Chair Exercise', gradient: 'linear-gradient(135deg, #FF6B35, #FF8F65)' },
+  meditation: { emoji: '😌', label: 'Relaxation', gradient: 'linear-gradient(135deg, #4ECDC4, #7EDDD6)' },
+  cooking: { emoji: '🍲', label: 'Easy Cooking', gradient: 'linear-gradient(135deg, #FFD166, #FFE0A0)' },
+  nature: { emoji: '🌿', label: 'Nature', gradient: 'linear-gradient(135deg, #66BB6A, #81C784)' },
+  faith: { emoji: '⛪', label: 'Faith', gradient: 'linear-gradient(135deg, #7E57C2, #B39DDB)' },
 }
 
 const VIDEOS: VideoItem[] = [
-  // Exercise
-  { id: 'v1', youtubeId: 'k4O_Jf9ycPE', title: 'Chair Yoga for Seniors', duration: '15 min', category: 'exercise' },
-  { id: 'v2', youtubeId: '4pKly2JojMw', title: '10 Min Gentle Morning Stretch', duration: '10 min', category: 'exercise' },
-  { id: 'v3', youtubeId: 'cjEMvGbHyKY', title: 'Senior Fitness - Full Body Workout', duration: '20 min', category: 'exercise' },
-  { id: 'v4', youtubeId: 'dQfm07L0MOs', title: 'Balance Exercises for Seniors', duration: '12 min', category: 'exercise' },
-  { id: 'v5', youtubeId: 'nluHVydQzRo', title: 'Tai Chi for Beginners', duration: '25 min', category: 'exercise' },
-  // Meditation
-  { id: 'v6', youtubeId: 'inpok4MKVLM', title: 'Guided Morning Meditation', duration: '10 min', category: 'meditation' },
-  { id: 'v7', youtubeId: 'O-6f5wQXSu8', title: '10 Minute Meditation for Anxiety', duration: '10 min', category: 'meditation' },
-  { id: 'v8', youtubeId: 'rvaqPPjGLJc', title: 'Peaceful Sleep Meditation', duration: '30 min', category: 'meditation' },
-  { id: 'v9', youtubeId: 'HRuqe26eDuQ', title: 'Gratitude Meditation', duration: '15 min', category: 'meditation' },
-  // Cooking
-  { id: 'v10', youtubeId: 'GtL1huin9EE', title: 'Easy Healthy Meals for One', duration: '12 min', category: 'cooking' },
-  { id: 'v11', youtubeId: '21ofoREnXbM', title: 'Simple Soup Recipes', duration: '15 min', category: 'cooking' },
-  { id: 'v12', youtubeId: 'I0t8ZAhb8e4', title: 'Baking Bread at Home', duration: '20 min', category: 'cooking' },
-  { id: 'v13', youtubeId: 'sXEnGkx5gMQ', title: 'Healthy Breakfast Ideas', duration: '10 min', category: 'cooking' },
-  // Nature
-  { id: 'v14', youtubeId: 'Qm846KdZN_c', title: 'Beautiful Bird Sounds', duration: '60 min', category: 'nature' },
-  { id: 'v15', youtubeId: 'WHPEKLQID4U', title: 'Ocean Waves Relaxation', duration: '45 min', category: 'nature' },
-  { id: 'v16', youtubeId: 'xNN7iTA57jM', title: 'Forest Walk Ambiance', duration: '30 min', category: 'nature' },
-  { id: 'v17', youtubeId: 'FkMWHmpOr48', title: 'Sunrise Time Lapse', duration: '8 min', category: 'nature' },
-  // Faith
-  { id: 'v18', youtubeId: 'Q5HCYi0Tz8U', title: 'Morning Prayer & Devotion', duration: '15 min', category: 'faith' },
-  { id: 'v19', youtubeId: 'pJLdJlSdCKc', title: 'Peaceful Hymns Collection', duration: '60 min', category: 'faith' },
-  { id: 'v20', youtubeId: '0_YJqMiQZKs', title: 'Sunday Morning Worship', duration: '45 min', category: 'faith' },
+  // Seated Exercise — all chair-based for seniors
+  { id: 'v1', youtubeId: '7Ao-w9wF4ek', title: 'Seated Chair Exercises for Seniors', duration: '15 min', category: 'exercise' },
+  { id: 'v2', youtubeId: 'SVPi0MvYOqQ', title: '20 Min Chair Exercise for Seniors', duration: '20 min', category: 'exercise' },
+  { id: 'v3', youtubeId: '0r8P2fwGoxE', title: 'Gentle Seated Stretches for Over 60s', duration: '12 min', category: 'exercise' },
+  { id: 'v4', youtubeId: 'fJq4JRxZ8Pc', title: 'Chair Tai Chi for Seniors', duration: '18 min', category: 'exercise' },
+  { id: 'v5', youtubeId: 'Y0J3SPdP18Q', title: 'Seated Balance Exercises for Elderly', duration: '10 min', category: 'exercise' },
+  // Relaxation & Sleep
+  { id: 'v6', youtubeId: '1ZYbU82GVz4', title: 'Calming Music for Elderly', duration: '60 min', category: 'meditation' },
+  { id: 'v7', youtubeId: 'USbJ0VUcPb4', title: 'Gentle Guided Relaxation for Seniors', duration: '20 min', category: 'meditation' },
+  { id: 'v8', youtubeId: 'aXItOY0sLRY', title: 'Sleep Music for Older Adults', duration: '45 min', category: 'meditation' },
+  { id: 'v9', youtubeId: 'eKFTSSKCzWA', title: 'Nature Sounds for Relaxation', duration: '30 min', category: 'meditation' },
+  // Easy Cooking
+  { id: 'v10', youtubeId: 'GtL1huin9EE', title: 'Easy One-Pot Meals for Seniors', duration: '12 min', category: 'cooking' },
+  { id: 'v11', youtubeId: '21ofoREnXbM', title: 'Simple Healthy Meals for One Person', duration: '15 min', category: 'cooking' },
+  { id: 'v12', youtubeId: 'sXEnGkx5gMQ', title: 'No-Fuss Breakfast Ideas for Seniors', duration: '10 min', category: 'cooking' },
+  { id: 'v13', youtubeId: 'I0t8ZAhb8e4', title: 'Easy Slow Cooker Recipes', duration: '20 min', category: 'cooking' },
+  // Nature & Scenery
+  { id: 'v14', youtubeId: 'Qm846KdZN_c', title: 'Beautiful Garden Tour', duration: '60 min', category: 'nature' },
+  { id: 'v15', youtubeId: 'WHPEKLQID4U', title: 'Relaxing Ocean Waves', duration: '45 min', category: 'nature' },
+  { id: 'v16', youtubeId: 'xNN7iTA57jM', title: 'Bird Watching Documentary', duration: '30 min', category: 'nature' },
+  { id: 'v17', youtubeId: 'FkMWHmpOr48', title: 'Peaceful Countryside Walk', duration: '20 min', category: 'nature' },
+  // Faith & Inspiration
+  { id: 'v18', youtubeId: 'Q5HCYi0Tz8U', title: 'Morning Devotional for Seniors', duration: '15 min', category: 'faith' },
+  { id: 'v19', youtubeId: 'pJLdJlSdCKc', title: 'Classic Hymns Collection', duration: '60 min', category: 'faith' },
+  { id: 'v20', youtubeId: '0_YJqMiQZKs', title: 'Uplifting Stories of Hope', duration: '45 min', category: 'faith' },
 ]
 
 const CATEGORIES: VideoCategory[] = ['exercise', 'meditation', 'cooking', 'nature', 'faith']
