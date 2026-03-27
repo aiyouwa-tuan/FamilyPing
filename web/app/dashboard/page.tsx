@@ -446,9 +446,6 @@ export default function DashboardPage() {
               { href: '/dashboard/calls', icon: '\uD83C\uDF99', label: 'Calls' },
               { href: '/dashboard/memory-book', icon: '\uD83D\uDCD6', label: 'Memory' },
               { href: '/dashboard/voice-setup', icon: '\uD83C\uDFA4', label: 'Voice' },
-              { href: '/dashboard/parent/listen', icon: '\uD83C\uDFA7', label: 'Listen' },
-              { href: '/dashboard/parent/watch', icon: '\uD83D\uDCFA', label: 'Watch' },
-              { href: '/dashboard/parent/phonebook', icon: '\uD83D\uDCDE', label: 'Phonebook' },
             ].filter(Boolean).map((item, idx) => {
               const color = quickActionColors[idx % quickActionColors.length]
               if (!item) return null

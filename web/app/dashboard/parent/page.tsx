@@ -294,6 +294,12 @@ export default function ParentDashboard() {
     )
   }
 
+  // If family role, redirect to family dashboard
+  if (currentUser.role === 'family') {
+    router.push('/dashboard')
+    return null
+  }
+
   const weatherEmoji = weather ? (WEATHER_ICONS[weather.icon] || '\u2600\uFE0F') : '\u2600\uFE0F'
 
   return (

@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase'
 
 interface Tab {
   href: string
@@ -12,24 +13,24 @@ interface Tab {
   matchPaths: string[]
 }
 
-const tabs: Tab[] = [
+const parentTabs: Tab[] = [
   {
-    href: '/dashboard',
+    href: '/dashboard/parent',
     label: 'Home',
     iconSrc: '/icons/tab-home.png',
-    matchPaths: ['/dashboard'],
-  },
-  {
-    href: '/dashboard/health',
-    label: 'Health',
-    iconSrc: '/icons/tab-health.png',
-    matchPaths: ['/dashboard/health'],
+    matchPaths: ['/dashboard/parent'],
   },
   {
     href: '/dashboard/parent/listen',
     label: 'Listen',
     iconSrc: '/icons/tab-listen.png',
     matchPaths: ['/dashboard/parent/listen'],
+  },
+  {
+    href: '/dashboard/parent/watch',
+    label: 'Watch',
+    iconSrc: '/icons/tab-listen.png',
+    matchPaths: ['/dashboard/parent/watch'],
   },
   {
     href: '/dashboard/messages',
@@ -45,13 +46,67 @@ const tabs: Tab[] = [
   },
 ]
 
+const familyTabs: Tab[] = [
+  {
+    href: '/dashboard',
+    label: 'Home',
+    iconSrc: '/icons/tab-home.png',
+    matchPaths: ['/dashboard'],
+  },
+  {
+    href: '/dashboard/health',
+    label: 'Health',
+    iconSrc: '/icons/tab-health.png',
+    matchPaths: ['/dashboard/health'],
+  },
+  {
+    href: '/dashboard/messages',
+    label: 'Messages',
+    iconSrc: '/icons/tab-messages.png',
+    matchPaths: ['/dashboard/messages'],
+  },
+  {
+    href: '/dashboard/insights',
+    label: 'Insights',
+    iconSrc: '/icons/tab-health.png',
+    matchPaths: ['/dashboard/insights'],
+  },
+  {
+    href: '/dashboard/settings',
+    label: 'Settings',
+    iconSrc: '/icons/tab-settings.png',
+    matchPaths: ['/dashboard/settings'],
+  },
+]
+
 export default function BottomTabBar() {
   const pathname = usePathname()
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
   const [visible, setVisible] = useState(true)
+  const [role, setRole] = useState<'parent' | 'family' | null>(null)
 
   // Only show on /dashboard/* pages
   const shouldShow = pathname?.startsWith('/dashboard')
+
+  useEffect(() => {
+    async function fetchRole() {
+      const supabase = createClient()
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (!authUser) return
+
+      const { data: userData } = await supabase
+        .from('users')
+        .select('role')
+        .eq('auth_id', authUser.id)
+        .limit(1)
+        .single()
+
+      if (userData) {
+        setRole(userData.role === 'parent' ? 'parent' : 'family')
+      }
+    }
+    fetchRole()
+  }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.visualViewport) return
@@ -74,13 +129,18 @@ export default function BottomTabBar() {
     setVisible(!isKeyboardOpen)
   }, [isKeyboardOpen])
 
-  if (!shouldShow || !visible) return null
+  if (!shouldShow || !visible || !role) return null
+
+  const tabs = role === 'parent' ? parentTabs : familyTabs
 
   function isActive(tab: Tab): boolean {
     if (!pathname) return false
-    // Exact match for /dashboard to avoid matching sub-pages
-    if (tab.href === '/dashboard') {
-      return pathname === '/dashboard' || pathname === '/dashboard/parent'
+    // Exact match for home tabs to avoid matching sub-pages
+    if (tab.href === '/dashboard' && role === 'family') {
+      return pathname === '/dashboard'
+    }
+    if (tab.href === '/dashboard/parent' && role === 'parent') {
+      return pathname === '/dashboard/parent'
     }
     return tab.matchPaths.some((p) => pathname.startsWith(p))
   }
